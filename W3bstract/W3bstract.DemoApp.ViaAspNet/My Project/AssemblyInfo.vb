@@ -7,9 +7,8 @@ Imports System.Runtime.InteropServices
 ' associated with an assembly.
 
 ' Review the values of the assembly attributes
-
-<Assembly: AssemblyTitle("W3bstract.CefAdapter")>
-<Assembly: AssemblyDescription("Webhosting Middleware")>
+<Assembly: AssemblyTitle("Demo-APP")>
+<Assembly: AssemblyDescription("Demo-APP for the W3bstract Webhosting Middleware")>
 <Assembly: AssemblyCompany("KornSW")>
 <Assembly: AssemblyProduct("W3bstract")>
 <Assembly: AssemblyCopyright("KornSW")>
@@ -18,7 +17,7 @@ Imports System.Runtime.InteropServices
 <Assembly: ComVisible(False)>
 
 'The following GUID is for the ID of the typelib if this project is exposed to COM
-<Assembly: Guid("64d858d8-6a25-467c-8d94-fae5b9f01a65")>
+<Assembly: Guid("901901d1-16da-4695-9fd4-e8839db30b03")>
 
 ' Version information for an assembly consists of the following four values:
 '
@@ -31,5 +30,5 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("0.2.0.0")>
-<Assembly: AssemblyFileVersion("0.2.0.0")>
+<Assembly: AssemblyVersion("1.0.0.0")>
+<Assembly: AssemblyFileVersion("1.0.0.0")>

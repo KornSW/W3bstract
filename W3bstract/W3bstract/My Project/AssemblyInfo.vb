@@ -9,7 +9,7 @@ Imports System.Runtime.InteropServices
 ' Review the values of the assembly attributes
 
 <Assembly: AssemblyTitle("W3bstract")>
-<Assembly: AssemblyDescription("W3bstract")>
+<Assembly: AssemblyDescription("Webhosting Middleware")>
 <Assembly: AssemblyCompany("KornSW")>
 <Assembly: AssemblyProduct("W3bstract")>
 <Assembly: AssemblyCopyright("KornSW")>

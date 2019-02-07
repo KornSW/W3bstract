@@ -8,17 +8,17 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("W3bstract.HttpServer.Demo")>
-<Assembly: AssemblyDescription("")>
-<Assembly: AssemblyCompany("")>
-<Assembly: AssemblyProduct("W3bstract.HttpServer.Demo")>
-<Assembly: AssemblyCopyright("")>
-<Assembly: AssemblyTrademark("")>
+<Assembly: AssemblyTitle("Demo-APP")>
+<Assembly: AssemblyDescription("Demo-APP for the W3bstract Webhosting Middleware")>
+<Assembly: AssemblyCompany("KornSW")>
+<Assembly: AssemblyProduct("W3bstract")>
+<Assembly: AssemblyCopyright("KornSW")>
+<Assembly: AssemblyTrademark("KornSW")>
 
 <Assembly: ComVisible(False)>
 
 'The following GUID is for the ID of the typelib if this project is exposed to COM
-<Assembly: Guid("407c0c6e-f463-47ff-8d56-150f74cd9f26")>
+<Assembly: Guid("1ecd29e8-ff9a-4867-9f3d-49768da999eb")>
 
 ' Version information for an assembly consists of the following four values:
 '

@@ -53,6 +53,32 @@ Namespace My
                 Return defaultInstance
             End Get
         End Property
+        
+        <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
+        Public ReadOnly Property AssemblyLookupDirectory() As String
+            Get
+                Return CType(Me("AssemblyLookupDirectory"),String)
+            End Get
+        End Property
+        
+        <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("http://localhost:7836/")>  _
+        Public ReadOnly Property ApiServiceUrl() As String
+            Get
+                Return CType(Me("ApiServiceUrl"),String)
+            End Get
+        End Property
+        
+        <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("/")>  _
+        Public ReadOnly Property BaseAddress() As String
+            Get
+                Return CType(Me("BaseAddress"),String)
+            End Get
+        End Property
     End Class
 End Namespace
 
@@ -64,9 +90,9 @@ Namespace My
     Friend Module MySettingsProperty
         
         <Global.System.ComponentModel.Design.HelpKeywordAttribute("My.Settings")>  _
-        Friend ReadOnly Property Settings() As Global.W3bstract.My.MySettings
+        Friend ReadOnly Property Settings() As Global.T2S.MemberFrontend.AspHost.My.MySettings
             Get
-                Return Global.W3bstract.My.MySettings.Default
+                Return Global.T2S.MemberFrontend.AspHost.My.MySettings.Default
             End Get
         End Property
     End Module

@@ -8,12 +8,12 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("W3bstract.WebServiceFacade")> 
-<Assembly: AssemblyDescription("")>
-<Assembly: AssemblyCompany("")>
-<Assembly: AssemblyProduct("W3bstract.WebServiceFacade")>
-<Assembly: AssemblyCopyright("")>
-<Assembly: AssemblyTrademark("")> 
+<Assembly: AssemblyTitle("W3bstract.WebServiceFacade")>
+<Assembly: AssemblyDescription("Webhosting Middleware")>
+<Assembly: AssemblyCompany("KornSW")>
+<Assembly: AssemblyProduct("W3bstract")>
+<Assembly: AssemblyCopyright("KornSW")>
+<Assembly: AssemblyTrademark("KornSW")>
 
 <Assembly: ComVisible(False)>
 
