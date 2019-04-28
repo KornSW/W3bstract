@@ -1,1 +1,0 @@
-nuget pack ./W3bstract.CefAdapter.x86.nuspec -Build -Symbols -OutputDirectory "..\..\(NuGetRepo)" -InstallPackageToOutputPath

@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>W3bstract.CefAdapter</id>
+    <version>1.5.0</version>
+    <title>"W3bstract" Webhosting Middleware - CefSharp Adapter</title>
+    <authors>KornSW</authors>
+    <owners>KornSW</owners>
+    <!-- https://spdx.org/licenses/ -->
+    <license type="expression">GPL-3.0-only</license>
+    <projectUrl>https://github.com/KornSW/W3bstract</projectUrl>
+    <iconUrl>https://github.com/KornSW/W3bstract/blob/master/PackageIcon.png?raw=true</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>combines the CefSharp chromium wrapper with the W3bstract framework to run a in-memory hosted web application within a .NET exe</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright KornSW</copyright>
+    <tags>W3bstract HTTP Middleware Webhosting Webserver CefSharp SPA</tags>
+    <dependencies>
+      <group>
+        <dependency id="W3bstract" version="1.5.0" />
+        <dependency id="Newtonsoft.Json" version="12.0.1" />
+        <dependency id="kSystemExtensions" version="2.2.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    
+    <!-- https://docs.microsoft.com/en-us/nuget/create-packages/creating-a-package#from-a-convention-based-working-directory -->
+    
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\W3bstract.CefAdapter.dll" target="lib/{tfm}" />
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\W3bstract.CefAdapter.xml" target="lib/{tfm}" />
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\W3bstract.CefAdapter.pdb" target="lib/{tfm}" />
+    
+    <!-- CefCharp .NET-Assemblies -->
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\CefSharp.Core.dll" target="lib/{tfm}" />
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\CefSharp.dll" target="lib/{tfm}" />    
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\CefSharp.WinForms.dll" target="lib/{tfm}" />
+
+    <!-- CefCharp non-.NET Runtimes -->
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\CefSharp.BrowserSubprocess.exe" target="CefRuntimes" />
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\CefSharp.BrowserSubprocess.Core.dll" target="CefRuntimes" />
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\chrome_elf.dll" target="CefRuntimes" />
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\d3dcompiler_47.dll" target="CefRuntimes" />
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\libcef.dll" target="CefRuntimes" />
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\libEGL.dll" target="CefRuntimes" />
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\libGLESv2.dll" target="CefRuntimes" />
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\libcef.dll" target="CefRuntimes" />
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\*.bin" target="CefRuntimes" />
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\*.dat" target="CefRuntimes" />
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\*.pak" target="CefRuntimes" />
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\locales\*.*" target="CefRuntimes/locales" />
+    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\swiftshader\*.*" target="CefRuntimes/swiftshader"/>
+
+    <!-- Build-Targets zum kopieren der CefCharp non-.NET Runtimes in den build-output -->
+    <file src="W3bstract\W3bstract.CefAdapter\CopyCefRuntimesToOutdir.targets" target="build/net46/CopyCefRuntimesToOutdir.targets" />
+    
+    <!-- Build-Targets, welche bei der Nuget-Package Installation automatisch in die Projektdatei indiziert werden -->
+    <file src="W3bstract\W3bstract.CefAdapter\InjectIntoProjectFile.targets" target="build/net46/W3bstract.CefAdapter.targets" />
+    
+  </files>
+</package>

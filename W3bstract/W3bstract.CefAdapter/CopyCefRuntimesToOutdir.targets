@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- REQUIRED TO GET THE "AfterBuild" EVENT WORKING!!! -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <CefRuntimes Include="$(MSBuildThisFileDirectory)..\..\CefRuntimes\*.*" />
+      <CefLocalesFiles Include="$(MSBuildThisFileDirectory)..\..\CefRuntimes\locales\*.*" />
+      <CefSwiftshaderFiles Include="$(MSBuildThisFileDirectory)..\..\CefRuntimes\swiftshader\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(CefRuntimes)" DestinationFolder="$(OutputPath)" ContinueOnError="false" />
+    <Copy SourceFiles="@(CefLocalesFiles)" DestinationFolder="$(OutputPath)\locales\" ContinueOnError="false" />
+    <Copy SourceFiles="@(CefSwiftshaderFiles)" DestinationFolder="$(OutputPath)\swiftshader\" ContinueOnError="false" />
+  </Target>
+
+</Project>

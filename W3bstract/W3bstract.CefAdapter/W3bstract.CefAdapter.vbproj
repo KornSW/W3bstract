@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.props" Condition="Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.props')" />
+  <Import Project="..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.props" Condition="Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.props')" />
+  <Import Project="..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\cef.redist.x86.3.3578.1870\build\cef.redist.x86.props" Condition="Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\cef.redist.x86.3.3578.1870\build\cef.redist.x86.props')" />
+  <Import Project="..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\cef.redist.x64.3.3578.1870\build\cef.redist.x64.props" Condition="Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\cef.redist.x64.3.3578.1870\build\cef.redist.x64.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -11,6 +15,8 @@
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
@@ -67,8 +73,14 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CefSharp.WinForms, Version=63.0.3.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CefSharp.WinForms.63.0.3\CefSharp\x64\CefSharp.WinForms.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -76,18 +88,26 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <Import Include="Microsoft.VisualBasic" />
-    <Import Include="System" />
-    <Import Include="System.Collections" />
-    <Import Include="System.Collections.Generic" />
-    <Import Include="System.Data" />
-    <Import Include="System.Diagnostics" />
-    <Import Include="System.Linq" />
-    <Import Include="System.Xml.Linq" />
-    <Import Include="System.Threading.Tasks" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Class1.vb" />
+    <Compile Include="AbstractHosting\CEF\CefRuntimeAdapter.CefRequestContext.vb" />
+    <Compile Include="AbstractHosting\CEF\CefRuntimeAdapter.vb" />
+    <Compile Include="JsBridging\JsInMemoryHttpClient.vb" />
+    <Compile Include="JsBridging\Attributes.vb" />
+    <Compile Include="JsBridging\JsHookingAdapter.vb" />
+    <Compile Include="AbstractHosting\CEF\CefRuntimeAdapter.CefWebRequestWrapper.vb" />
+    <Compile Include="AbstractHosting\CEF\CefRuntimeAdapter.CefWebResponseWrapper.vb" />
+    <Compile Include="WinForms\CefControl.Designer.vb">
+      <DependentUpon>CefControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="WinForms\CefControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WinForms\CefDialog.Designer.vb">
+      <DependentUpon>CefDialog.vb</DependentUpon>
+    </Compile>
+    <Compile Include="WinForms\CefDialog.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WinForms\DialogLauncher.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -111,8 +131,18 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="WinForms\CefControl.resx">
+      <DependentUpon>CefControl.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WinForms\CefDialog.resx">
+      <DependentUpon>CefDialog.vb</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="CopyCefRuntimesToOutdir.targets">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="InjectIntoProjectFile.targets" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
@@ -122,8 +152,31 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\W3bstract\W3bstract.vbproj">
+      <Project>{b46080d0-cfad-4d6a-b964-86b0858e742c}</Project>
+      <Name>W3bstract</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{94E38DFF-614B-4CBD-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\cef.redist.x64.3.3578.1870\build\cef.redist.x64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\cef.redist.x64.3.3578.1870\build\cef.redist.x64.props'))" />
+    <Error Condition="!Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\cef.redist.x86.3.3578.1870\build\cef.redist.x86.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\cef.redist.x86.3.3578.1870\build\cef.redist.x86.props'))" />
+    <Error Condition="!Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.props'))" />
+    <Error Condition="!Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.targets'))" />
+    <Error Condition="!Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.props'))" />
+    <Error Condition="!Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.targets'))" />
+  </Target>
+  <Import Project="..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.targets" Condition="Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.targets')" />
+  <Import Project="..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.targets" Condition="Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

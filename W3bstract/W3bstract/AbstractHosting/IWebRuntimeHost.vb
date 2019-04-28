@@ -1,8 +1,11 @@
 ﻿Imports System
-Imports System.IO
 
-Public Interface IWebRuntimeHost
+Namespace AbstractHosting
 
-  ReadOnly Property ServerRuntime As String
+  Public Interface IWebRuntimeHost
 
-End Interface
+    ReadOnly Property ServerRuntime As String
+
+  End Interface
+
+End Namespace

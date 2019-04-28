@@ -50,28 +50,7 @@ Public Class CallParameter
   Public Property TypeName As String = Nothing
 End Class
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #Region " LEGACY "
-
 
 <Obsolete()>
 Public Class WebServiceResponse

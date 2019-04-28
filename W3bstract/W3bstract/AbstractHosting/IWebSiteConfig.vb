@@ -1,7 +1,11 @@
 ﻿Imports System
 
-Public Interface IWebSiteConfig
+Namespace AbstractHosting
 
-  ReadOnly Property BaseAddress As String
+  Public Interface IWebSiteConfig
 
-End Interface
+    ReadOnly Property BaseAddress As String
+
+  End Interface
+
+End Namespace

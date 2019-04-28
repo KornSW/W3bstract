@@ -6,11 +6,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C0B028BF-39F8-4930-A4EA-5001946C362B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>W3bstract.CefAdapter.Demo.My.MyApplication</StartupObject>
+    <StartupObject>Sub Main</StartupObject>
     <RootNamespace>W3bstract.CefAdapter.Demo</RootNamespace>
     <AssemblyName>W3bstract.CefAdapter.Demo</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <MyType>WindowsForms</MyType>
+    <MyType>WindowsFormsWithCustomSubMain</MyType>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
@@ -72,6 +72,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -85,26 +88,8 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <Import Include="Microsoft.VisualBasic" />
-    <Import Include="System" />
-    <Import Include="System.Collections" />
-    <Import Include="System.Collections.Generic" />
-    <Import Include="System.Data" />
-    <Import Include="System.Drawing" />
-    <Import Include="System.Diagnostics" />
-    <Import Include="System.Windows.Forms" />
-    <Import Include="System.Linq" />
-    <Import Include="System.Xml.Linq" />
-    <Import Include="System.Threading.Tasks" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Form1.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form1.Designer.vb">
-      <DependentUpon>Form1.vb</DependentUpon>
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="FooService.vb" />
+    <Compile Include="Main.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -140,6 +125,31 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AppIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\W3bstract.CefAdapter\W3bstract.CefAdapter.vbproj">
+      <Project>{fccc927d-5bb6-4c7a-ab0f-5a2de1551829}</Project>
+      <Name>W3bstract.CefAdapter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\W3bstract.DemoApp.AngularSpaBundle\W3bstract.DemoApp.SpaBundle.vbproj">
+      <Project>{02a6df02-b077-4ab3-8741-ced5cbd7d53b}</Project>
+      <Name>W3bstract.DemoApp.SpaBundle</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\W3bstract.DemoApp.BackendApi\W3bstract.DemoApp.BackendApi.vbproj">
+      <Project>{94114fb4-458f-4b4e-80fb-149dc4bf9ce0}</Project>
+      <Name>W3bstract.DemoApp.BackendApi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\W3bstract.WebServiceFacade\W3bstract.WebServiceFacade.vbproj">
+      <Project>{0fa42475-8e6c-440f-a3a8-c58a26e8f291}</Project>
+      <Name>W3bstract.WebServiceFacade</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\W3bstract\W3bstract.vbproj">
+      <Project>{b46080d0-cfad-4d6a-b964-86b0858e742c}</Project>
+      <Name>W3bstract</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -52,17 +52,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <Import Include="Microsoft.VisualBasic" />
-    <Import Include="System" />
-    <Import Include="System.Collections" />
-    <Import Include="System.Collections.Generic" />
-    <Import Include="System.Data" />
-    <Import Include="System.Diagnostics" />
-    <Import Include="System.Linq" />
-    <Import Include="System.Xml.Linq" />
-    <Import Include="System.Threading.Tasks" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="EntryPoint.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -97,6 +87,16 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\W3bstract.WebServiceFacade\W3bstract.WebServiceFacade.vbproj">
+      <Project>{0fa42475-8e6c-440f-a3a8-c58a26e8f291}</Project>
+      <Name>W3bstract.WebServiceFacade</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\W3bstract\W3bstract.vbproj">
+      <Project>{b46080d0-cfad-4d6a-b964-86b0858e742c}</Project>
+      <Name>W3bstract</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

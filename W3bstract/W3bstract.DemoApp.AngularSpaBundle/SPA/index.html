@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+
+    <h1>HELLO WORLD</h1>
+
+    <hr />
+
+    <div>Current CPU Usage (evaluated in .NET): <b><span id="cpu">?</span>%</b> </div>
+
+
+    <script>
+
+      class FooService {
+
+        constructor(cpuEl) {
+          this.cpuElement = cpuEl;     
+        }
+
+        test() {
+          this.message = this.getMessage();
+          this.showMsg();
+        }
+
+        //this will be hooked into the .NET world!!!
+        getMessage() {
+          return 'default message from js';
+        }
+
+        showMsg() {
+          alert(this.message);
+        }
+
+        onCpuLoadUpdateFromDotNet(arg1, arg2) {
+          this.cpuElement.innerHTML = arg1;
+         // document.getElementById('cpu').innerHTML = new 'arg1'    
+        }
+
+        changeTheme(themeName) {
+          alert('changeTheme to ' + themeName);
+          return true;
+        }
+
+      }
+
+      class W3bstractHttpClient {
+
+        //this will be hooked into the .NET world!!!
+        queueRequest(httpMethod, url, payload){
+          return 0; //hoocked version will return the request handle
+        }
+
+        //this will be called from the .NET world!!!
+        handleResponse(handle, httpStatusCode, response) {
+          console.warn('WebService-Response: ' + response);
+        }
+      }
+
+      window.fooSvc = new FooService(document.getElementById('cpu'));
+      //window.w3bstractHttpClient = new W3bstractHttpClient();
+
+    </script> 
+
+    <hr />
+
+    <img src="/test.png"/>
+
+    <input id="clickMe" type="button" value="GO" onclick="window.fooSvc.test();" />
+
+    <input id="clickMe2" type="button" value="Exit Application" onclick="window.fooSvc.exit();" />
+
+    <input id="clickMe3" type="button" value="Send WebService Request" onclick="window.w3bstractHttpProxy.queueRequest('GET','http://inMemory.local/test.txt','');" />
+
+  </body>
+</html>

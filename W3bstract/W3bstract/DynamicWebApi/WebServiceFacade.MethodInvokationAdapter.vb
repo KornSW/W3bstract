@@ -3,8 +3,6 @@ Imports System.Collections.Generic
 Imports System.IO
 Imports System.Linq
 Imports System.Reflection
-Imports Newtonsoft.Json
-Imports SmartCoreFx.Web
 
 Partial Class WebServiceFacade(Of TServiceContract)
 
@@ -148,7 +146,13 @@ Partial Class WebServiceFacade(Of TServiceContract)
 
            Dim arg = requestCapsle.CallArguments.MethodArguments.Where(Function(a) a.ParamName.ToLower() = lowerName).SingleOrDefault()
            If (arg IsNot Nothing) Then
-             Return arg.Value
+
+             If (arg.Value IsNot Nothing) Then
+               'HACK: UGLY CONVERSION!!!
+               Dim reTypedArgValue As Object = JsonTypeConversion.MakeTyped(parameter.ParameterType, arg.Value)
+               Return reTypedArgValue
+             End If
+
            End If
 
            Return Nothing
