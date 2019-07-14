@@ -5,46 +5,50 @@ Imports System.Linq
 Imports System.Runtime.CompilerServices
 Imports Newtonsoft.Json
 
-Friend Module JsonTypeConversion
+Namespace Serialization
 
-  Public Function MakeTyped(ofType As Type, obj As Object) As Object
-    Try
-      Dim untypedCapsle As New JsonTypeConversionCapsle(Of Object) With {.Content = obj}
-      Dim serializedString = JsonConvert.SerializeObject(untypedCapsle)
+  Friend Module JsonTypeConversion
 
-      Dim genericCapsleType As Type = GetType(JsonTypeConversionCapsle(Of ))
-      Dim specificCapsleType As Type = genericCapsleType.MakeGenericType(ofType)
-      Dim specificCapsleContentProperty = specificCapsleType.GetProperty("Content")
+    Public Function MakeTyped(ofType As Type, obj As Object) As Object
+      Try
+        Dim untypedCapsle As New JsonTypeConversionCapsle(Of Object) With {.Content = obj}
+        Dim serializedString = JsonConvert.SerializeObject(untypedCapsle)
 
-      Dim genericDeserializeObjectMethod = GetType(JsonConvert).GetMethods().Where(Function(m) m.Name = NameOf(JsonConvert.DeserializeObject) AndAlso m.IsGenericMethodDefinition AndAlso m.GetParameters().Count = 1).Single()
-      Dim specificDeserializeObjectMethod = genericDeserializeObjectMethod.MakeGenericMethod(specificCapsleType)
+        Dim genericCapsleType As Type = GetType(JsonTypeConversionCapsle(Of ))
+        Dim specificCapsleType As Type = genericCapsleType.MakeGenericType(ofType)
+        Dim specificCapsleContentProperty = specificCapsleType.GetProperty("Content")
 
-      Dim deserializedCaplseInstance As Object = specificDeserializeObjectMethod.Invoke(Nothing, {serializedString})
+        Dim genericDeserializeObjectMethod = GetType(JsonConvert).GetMethods().Where(Function(m) m.Name = NameOf(JsonConvert.DeserializeObject) AndAlso m.IsGenericMethodDefinition AndAlso m.GetParameters().Count = 1).Single()
+        Dim specificDeserializeObjectMethod = genericDeserializeObjectMethod.MakeGenericMethod(specificCapsleType)
 
-      obj = specificCapsleContentProperty.GetValue(deserializedCaplseInstance)
+        Dim deserializedCaplseInstance As Object = specificDeserializeObjectMethod.Invoke(Nothing, {serializedString})
 
-      Return obj
+        obj = specificCapsleContentProperty.GetValue(deserializedCaplseInstance)
 
-    Catch ex As Exception
-      Return Nothing
-    End Try
-  End Function
+        Return obj
 
-  Public Function MakeTyped(Of TTarget)(obj As Object) As TTarget
-    Try
-      Dim untypedCapsle As New JsonTypeConversionCapsle(Of Object) With {.Content = obj}
-      Dim serializedString = JsonConvert.SerializeObject(untypedCapsle)
-      Dim typedCapsle = JsonConvert.DeserializeObject(Of JsonTypeConversionCapsle(Of TTarget))(serializedString)
-      Return typedCapsle.Content
-    Catch ex As Exception
-      Return Nothing
-    End Try
-  End Function
+      Catch ex As Exception
+        Return Nothing
+      End Try
+    End Function
 
-End Module
+    Public Function MakeTyped(Of TTarget)(obj As Object) As TTarget
+      Try
+        Dim untypedCapsle As New JsonTypeConversionCapsle(Of Object) With {.Content = obj}
+        Dim serializedString = JsonConvert.SerializeObject(untypedCapsle)
+        Dim typedCapsle = JsonConvert.DeserializeObject(Of JsonTypeConversionCapsle(Of TTarget))(serializedString)
+        Return typedCapsle.Content
+      Catch ex As Exception
+        Return Nothing
+      End Try
+    End Function
 
-Friend Class JsonTypeConversionCapsle(Of T)
+  End Module
 
-  Public Property Content As T
+  Friend Class JsonTypeConversionCapsle(Of T)
 
-End Class
+    Public Property Content As T
+
+  End Class
+
+End Namespace

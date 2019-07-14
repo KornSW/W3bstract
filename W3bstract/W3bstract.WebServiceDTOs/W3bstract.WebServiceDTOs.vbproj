@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0FA42475-8E6C-440F-A3A8-C58A26E8F291}</ProjectGuid>
+    <ProjectGuid>{97443FD3-2F3C-4976-A415-20963CF0FEAF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>W3bstract.ServiceCommunication</RootNamespace>
-    <AssemblyName>W3bstract.WebServiceFacade</AssemblyName>
+    <AssemblyName>W3bstract.WebServiceDTOs</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
@@ -18,7 +18,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>W3bstract.WebServiceFacade.xml</DocumentationFile>
+    <DocumentationFile>W3bstract.WebServiceDTOs.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -27,7 +27,7 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>W3bstract.WebServiceFacade.xml</DocumentationFile>
+    <DocumentationFile>W3bstract.WebServiceDTOs.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
@@ -43,32 +43,22 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="kSystemExtensions, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\(Vendor)\NuGet\kSystemExtensions.2.2.0\lib\{tfm}\kSystemExtensions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\(Vendor)\NuGet\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Facade\ExceptionHandlingStrategy.vb" />
-    <Compile Include="Facade\IWebServiceRequestHook.vb" />
-    <Compile Include="Serialization\JsonTypeConversion.vb" />
+    <Compile Include="AmbienceChannel.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -84,11 +74,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Serialization\WebSerilaizers.vb" />
-    <Compile Include="Facade\WebService.vb" />
-    <Compile Include="Facade\WebServiceFacade.MethodInvokationAdapter.vb" />
-    <Compile Include="Facade\WebServiceFacade.vb" />
-    <Compile Include="Serialization\Xaml.vb" />
+    <Compile Include="WebServiceRequest.vb" />
+    <Compile Include="WebServiceResponse.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
@@ -109,16 +96,6 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\W3bstract.WebServiceDTOs\W3bstract.WebServiceDTOs.vbproj">
-      <Project>{97443fd3-2f3c-4976-a415-20963cf0feaf}</Project>
-      <Name>W3bstract.WebServiceDTOs</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\W3bstract\W3bstract.vbproj">
-      <Project>{b46080d0-cfad-4d6a-b964-86b0858e742c}</Project>
-      <Name>W3bstract</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

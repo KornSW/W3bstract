@@ -1,14 +1,18 @@
 ﻿Imports System
 Imports System.Collections.Generic
+Imports System.Diagnostics
 Imports System.Linq
 Imports System.Reflection
 Imports System.Reflection.Emit
 
-'https://www.codeproject.com/Tips/138388/Dynamic-Generation-of-Client-Proxy-at-Runtime-in
-'https://www.codeproject.com/Articles/121568/Dynamic-Type-Using-Reflection-Emit
+Namespace Dynamics
 
-Public MustInherit Class DynamicProxy
+  'https://www.codeproject.com/Tips/138388/Dynamic-Generation-of-Client-Proxy-at-Runtime-in
+  'https://www.codeproject.com/Articles/121568/Dynamic-Type-Using-Reflection-Emit
 
+  Public MustInherit Class DynamicProxy
+
+    <DebuggerBrowsable(DebuggerBrowsableState.Never)>
     Private WithEvents _Invoker As IDynamicProxyInvoker
 
     Public Shared Function CreateInstance(Of TApplicable)(ParamArray constructorArgs() As Object) As TApplicable
@@ -186,12 +190,21 @@ Public MustInherit Class DynamicProxy
               End If
 
               Dim argumentRedirectionArray = .DeclareLocal(GetType(Object()))
+              Dim argumentNameArray = .DeclareLocal(GetType(String()))
 
               .Emit(OpCodes.Nop) '------------------------------------------------------------------------
 
+              'ARRAY-INSTANZIIEREN
               .Emit(OpCodes.Ldc_I4_S, CByte(paramNames.Length)) ' CODE: Zahl x als (int32) wobei x die anzhalt der parameter unseerer methode ist
               .Emit(OpCodes.Newarr, GetType(Object)) ' CODE: Dim args(x) As Object
               .Emit(OpCodes.Stloc, argumentRedirectionArray)
+
+              .Emit(OpCodes.Nop) '------------------------------------------------------------------------
+
+              'ARRAY-INSTANZIIEREN
+              .Emit(OpCodes.Ldc_I4_S, CByte(paramNames.Length)) ' CODE: Zahl x als (int32) wobei x die anzhalt der parameter unseerer methode ist
+              .Emit(OpCodes.Newarr, GetType(String)) ' CODE: Dim args(x) As Object
+              .Emit(OpCodes.Stloc, argumentNameArray)
 
               '------------------------------------------------------------------------
 
@@ -223,12 +236,22 @@ Public MustInherit Class DynamicProxy
                   .Emit(OpCodes.Box, paramType) 'value-types müssen geboxed werden, weil die array-felder vom typ "object" sind
                 End If
                 .Emit(OpCodes.Stelem_Ref) 'ins transport-array hineinschreiben
+
+                '------------------------------------------------------------------------
+
+                .Emit(OpCodes.Ldloc, argumentNameArray) 'transport-array laden
+                .Emit(OpCodes.Ldc_I4_S, CByte(paramIndex)) 'arrayindex als integer (zwecks feld-addressierung) erzeugen
+                .Emit(OpCodes.Ldstr, paramNames(paramIndex)) 'name als string bereitlegen (als array inhalt)
+                .Emit(OpCodes.Stelem_Ref) 'ins transport-array hineinschreiben
+
               Next
 
               .Emit(OpCodes.Ldarg_0) '   < unsere klasseninstanz auf den stack
               .Emit(OpCodes.Ldfld, fieldBuilderDynamicProxyInvoker) ' feld '_DynamicProxyInvoker' laden auf den dtack)
               .Emit(OpCodes.Ldstr, mi.Name) '    < methodenname als string auf den stack holen
               .Emit(OpCodes.Ldloc, argumentRedirectionArray) 'pufferarray auf den stack holen
+              .Emit(OpCodes.Ldloc, argumentNameArray) 'pufferarray auf den stack holen
+
               'aufruf auf umgeleitete funktion absetzen
               .Emit(OpCodes.Callvirt, iDynamicProxyInvokerTypeInvokeMethod) '_DynamicProxyInvoker.InvokeMethod("Foo", args)
               'jetzt liegt ein result auf dem stack...
@@ -294,9 +317,6 @@ Public MustInherit Class DynamicProxy
     End Function
 #Region "..."
 
-
-
-
     'OverridePropertiesForStandardValues(converterTypeBuilder, baseType)
 
     '' Methode GetStandardValues mit "Return New StandardValuesCollection(allowedValues)" überschreiben
@@ -324,21 +344,6 @@ Public MustInherit Class DynamicProxy
     'ilGeneratorOverriding.Emit(OpCodes.Ret)
 
     'Return converterTypeBuilder.CreateType
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     'CODDE FÜR REIN:
 
@@ -379,3 +384,5 @@ Public MustInherit Class DynamicProxy
 
 #End Region
   End Class
+
+End Namespace

@@ -2,7 +2,7 @@
 Imports System.Reflection
 Imports System.Runtime.InteropServices
 
-<Assembly: AssemblyTitle("W3bstract.HttpServer")>
+<Assembly: AssemblyTitle("W3bstract.WebServiceConnector")>
 <Assembly: AssemblyDescription("Webhosting Middleware")>
 <Assembly: AssemblyCompany("KornSW")>
 <Assembly: AssemblyProduct("W3bstract")>
@@ -10,6 +10,6 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyTrademark("KornSW")>
 <Assembly: CLSCompliant(True)>
 <Assembly: ComVisible(False)>
-<Assembly: Guid("a63a8fa4-bcc8-4b6f-a959-dace892b3802")>
-<Assembly: AssemblyVersion("1.5.0.0")>
-<Assembly: AssemblyFileVersion("1.5.0.0")>
+<Assembly: Guid("18cf722b-affd-4e47-b5f3-4c698bcb1997")>
+<Assembly: AssemblyVersion("1.6.9.0")>
+<Assembly: AssemblyFileVersion("1.6.9.0")>

@@ -15,6 +15,7 @@ Namespace AbstractHosting.ASP
 
       Private _Request As HttpRequest
       Private _State As AspSessionState
+      Private _Cookies As Dictionary(Of String, String) = Nothing
 
       Public Sub New(request As HttpRequest, state As AspSessionState)
         _Request = request
@@ -72,7 +73,30 @@ Namespace AbstractHosting.ASP
 
       Public ReadOnly Property Cookies As Dictionary(Of String, String) Implements IWebRequest.Cookies
         Get
-          Throw New NotImplementedException()
+          SyncLock _Cookies
+
+            If (_Cookies Is Nothing) Then
+
+              _Cookies = New Dictionary(Of String, String)
+              For Each cookieName As String In _Request.Cookies.AllKeys
+                Dim cookie = _Request.Cookies.Item(cookieName)
+                If (cookie.HasKeys) Then
+                  For Each entryName As String In cookie.Values.Keys
+                    _Cookies.Add(cookieName + "." + entryName, cookie(entryName))
+                  Next
+                Else
+                  Dim i As Integer = 0
+                  For Each entry As String In cookie.Value
+                    _Cookies.Add(cookieName + "." + i.ToString(), entry)
+                    i += 1
+                  Next
+                End If
+              Next
+
+            End If
+
+            Return _Cookies
+          End SyncLock
         End Get
       End Property
 

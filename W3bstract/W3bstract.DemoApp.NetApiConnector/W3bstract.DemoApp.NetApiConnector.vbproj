@@ -57,17 +57,6 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <Import Include="Microsoft.VisualBasic" />
-    <Import Include="System" />
-    <Import Include="System.Collections" />
-    <Import Include="System.Collections.Generic" />
-    <Import Include="System.Data" />
-    <Import Include="System.Diagnostics" />
-    <Import Include="System.Linq" />
-    <Import Include="System.Xml.Linq" />
-    <Import Include="System.Threading.Tasks" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="ModuleMain.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -104,6 +93,20 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\W3bstract.DemoApp.BackendApi.Contract\W3bstract.DemoApp.BackendApi.Contract.vbproj">
+      <Project>{24f2fabc-febf-4f94-988f-9a856dadec1a}</Project>
+      <Name>W3bstract.DemoApp.BackendApi.Contract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\W3bstract.WebServiceConnector\W3bstract.WebServiceConnector.vbproj">
+      <Project>{b32ddb6b-e503-49fe-a93b-0249c3147bf2}</Project>
+      <Name>W3bstract.WebServiceConnector</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\W3bstract.WebServiceDTOs\W3bstract.WebServiceDTOs.vbproj">
+      <Project>{97443fd3-2f3c-4976-a415-20963cf0feaf}</Project>
+      <Name>W3bstract.WebServiceDTOs</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

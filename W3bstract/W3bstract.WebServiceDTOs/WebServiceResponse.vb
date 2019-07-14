@@ -269,6 +269,13 @@ Public Class ScalarDataResponse
 End Class
 
 <Obsolete()>
+Public Class ScalarDataResponse(Of TData)
+  Inherits DataResponse
+  Public Property Data As TData = Nothing
+
+End Class
+
+<Obsolete()>
 Public Class DataSetResponse
   Inherits DataResponse
 

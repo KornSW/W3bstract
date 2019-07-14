@@ -3,52 +3,55 @@ Imports System.Collections.Generic
 Imports System.IO
 Imports System.Linq
 Imports System.Reflection
+Imports W3bstract.ServiceCommunication.Serialization
 
-Partial Class WebServiceFacade(Of TServiceContract)
+Namespace DynamicFacade
 
-  Friend Class MethodInvokationAdapter
+  Partial Class WebServiceFacade(Of TServiceContract)
 
-    Private _Service As TServiceContract
-    Private _RequstHooks As IWebServiceRequestHook()
-    Private _Method As MethodInfo
+    Friend Class MethodInvokationAdapter
 
-    Private _ParamterFactories As New List(Of Func(Of IWebRequest, IWebSessionState, IWebResponse, IWebSerializer, ServiceRequest, Object))
-    Private _RequiredSecurityRoleSets As New List(Of String())
+      Private _Service As TServiceContract
+      Private _RequstHooks As IWebServiceRequestHook()
+      Private _Method As MethodInfo
 
-    Public Sub New(service As TServiceContract, method As MethodInfo, ParamArray requstHooks() As IWebServiceRequestHook)
-      _Service = service
-      _Method = method
-      _RequstHooks = requstHooks
+      Private _ParamterFactories As New List(Of Func(Of IWebRequest, IWebSessionState, IWebResponse, IWebSerializer, ServiceRequest, Object))
+      'Private _RequiredSecurityRoleSets As New List(Of String())
 
-      'For Each a In _Method.GetCustomAttributes(True)
-      '  Select Case a.GetType()
-      '    Case GetType(RequireSecurityRoleAttribute)
-      '      _RequiredSecurityRoleSets.Add(DirectCast(a, RequireSecurityRoleAttribute).RoleNames)
-      '  End Select
-      'Next
+      Public Sub New(service As TServiceContract, method As MethodInfo, ParamArray requstHooks() As IWebServiceRequestHook)
+        _Service = service
+        _Method = method
+        _RequstHooks = requstHooks
 
-      For Each p In _Method.GetParameters()
-        _ParamterFactories.Add(Me.BuildParameterValueGetterDelegate(p))
-      Next
+        'For Each a In _Method.GetCustomAttributes(True)
+        '  Select Case a.GetType()
+        '    Case GetType(RequireSecurityRoleAttribute)
+        '      _RequiredSecurityRoleSets.Add(DirectCast(a, RequireSecurityRoleAttribute).RoleNames)
+        '  End Select
+        'Next
 
-    End Sub
+        For Each p In _Method.GetParameters()
+          _ParamterFactories.Add(Me.BuildParameterValueGetterDelegate(p))
+        Next
 
-    Public ReadOnly Property Method As MethodInfo
-      Get
-        Return _Method
-      End Get
-    End Property
+      End Sub
 
-    Private Function BuildParameterValueGetterDelegate(parameter As ParameterInfo) As Func(Of IWebRequest, IWebSessionState, IWebResponse, IWebSerializer, ServiceRequest, Object)
-      Dim attributes = parameter.GetCustomAttributes(True)
-      Dim name = parameter.Name
-      Dim lowerName = name.ToLower()
-      Dim paramtype As Type = parameter.ParameterType
+      Public ReadOnly Property Method As MethodInfo
+        Get
+          Return _Method
+        End Get
+      End Property
 
-      For Each a In attributes
-        Select Case a.GetType()
-          Case GetType(PostBodyAttribute)
-            Return (
+      Private Function BuildParameterValueGetterDelegate(parameter As ParameterInfo) As Func(Of IWebRequest, IWebSessionState, IWebResponse, IWebSerializer, ServiceRequest, Object)
+        Dim attributes = parameter.GetCustomAttributes(True)
+        Dim name = parameter.Name
+        Dim lowerName = name.ToLower()
+        Dim paramtype As Type = parameter.ParameterType
+
+        For Each a In attributes
+          Select Case a.GetType()
+            Case GetType(PostBodyAttribute)
+              Return (
               Function(request As IWebRequest, session As IWebSessionState, response As IWebResponse, serializer As IWebSerializer, requestCapsle As ServiceRequest) As Object
                 Dim postBody As String = Nothing
                 If (request.HttpMethod = "POST" OrElse request.HttpMethod = "PUT") Then
@@ -63,8 +66,8 @@ Partial Class WebServiceFacade(Of TServiceContract)
                 End If
               End Function
             )
-          Case GetType(SessionStateAttribute)
-            Return (
+            Case GetType(SessionStateAttribute)
+              Return (
               Function(request As IWebRequest, session As IWebSessionState, response As IWebResponse, serializer As IWebSerializer, requestCapsle As ServiceRequest) As Object
 
                 Dim itm As Object = Nothing
@@ -82,23 +85,23 @@ Partial Class WebServiceFacade(Of TServiceContract)
                 Return itm
               End Function
             )
-          Case GetType(UrlParamAttribute)
-            Dim key = DirectCast(a, UrlParamAttribute).Key
-            Return (
+            Case GetType(UrlParamAttribute)
+              Dim key = DirectCast(a, UrlParamAttribute).Key
+              Return (
               Function(request As IWebRequest, session As IWebSessionState, response As IWebResponse, serializer As IWebSerializer, requestCapsle As ServiceRequest) As Object
                 Return request.ParseQuery().Item(key)
               End Function
             )
-          Case GetType(RequestHeaderAttribute)
-            Dim key = DirectCast(a, RequestHeaderAttribute).Key
-            Return (
+            Case GetType(RequestHeaderAttribute)
+              Dim key = DirectCast(a, RequestHeaderAttribute).Key
+              Return (
               Function(request As IWebRequest, session As IWebSessionState, response As IWebResponse, serializer As IWebSerializer, requestCapsle As ServiceRequest) As Object
                 Return request.Headers.Item(key)
               End Function
             )
-          Case GetType(CoockieValueAttribute)
-            Dim key = DirectCast(a, CoockieValueAttribute).Key
-            Return (
+            Case GetType(CoockieValueAttribute)
+              Dim key = DirectCast(a, CoockieValueAttribute).Key
+              Return (
               Function(request As IWebRequest, session As IWebSessionState, response As IWebResponse, serializer As IWebSerializer, requestCapsle As ServiceRequest) As Object
 
                 Throw New NotImplementedException
@@ -111,37 +114,37 @@ Partial Class WebServiceFacade(Of TServiceContract)
                 'Return c
               End Function
             )
-        End Select
-      Next
+          End Select
+        Next
 
-      Select Case (parameter.ParameterType)
-        Case GetType(IWebRequest)
-          Return (
+        Select Case (parameter.ParameterType)
+          Case GetType(IWebRequest)
+            Return (
             Function(request As IWebRequest, session As IWebSessionState, response As IWebResponse, serializer As IWebSerializer, requestCapsle As ServiceRequest) As Object
               Return request
             End Function
           )
-        Case GetType(IWebResponse)
-          Return (
+          Case GetType(IWebResponse)
+            Return (
             Function(request As IWebRequest, session As IWebSessionState, response As IWebResponse, serializer As IWebSerializer, requestCapsle As ServiceRequest) As Object
               Return response
             End Function
           )
-        Case GetType(IWebSessionState)
-          Return (
+          Case GetType(IWebSessionState)
+            Return (
             Function(request As IWebRequest, session As IWebSessionState, response As IWebResponse, serializer As IWebSerializer, requestCapsle As ServiceRequest) As Object
               Return session
             End Function
           )
-        Case GetType(ServiceRequest)
-          Return (
+          Case GetType(ServiceRequest)
+            Return (
             Function(request As IWebRequest, session As IWebSessionState, response As IWebResponse, serializer As IWebSerializer, requestCapsle As ServiceRequest) As Object
               Return requestCapsle
             End Function
          )
-      End Select
+        End Select
 
-      Return (
+        Return (
          Function(request As IWebRequest, session As IWebSessionState, response As IWebResponse, serializer As IWebSerializer, requestCapsle As ServiceRequest) As Object
 
            If (requestCapsle Is Nothing) Then
@@ -163,48 +166,78 @@ Partial Class WebServiceFacade(Of TServiceContract)
          End Function
       )
 
-    End Function
+      End Function
 
-    Public Function Invoke(request As IWebRequest, session As IWebSessionState, response As IWebResponse, serializer As IWebSerializer, requestCapsle As ServiceRequest) As Object
+      Public Function Invoke(request As IWebRequest, session As IWebSessionState, response As IWebResponse, serializer As IWebSerializer, requestCapsle As ServiceRequest) As Object
 
-      If (request.HttpMethod.Equals("options", StringComparison.CurrentCultureIgnoreCase)) Then
-        Return Nothing
-      End If
-
-      Dim parameterValues As New List(Of Object)
-
-      SyncLock _ParamterFactories
-        For Each pf In _ParamterFactories
-          parameterValues.Add(pf.Invoke(request, session, response, serializer, requestCapsle))
-        Next
-      End SyncLock
-
-      Dim params = _Method.GetParameters()
-      For i As Integer = 0 To params.Length - 1
-        If (TypeOf (parameterValues.Item(i)) Is String) Then
-          Dim pType = params(i).ParameterType
-          If (Not pType = GetType(String)) Then
-            Dim input = DirectCast(parameterValues.Item(i), String)
-            If (Not pType.TryParse(input, parameterValues.Item(i))) Then
-              Throw New Exception($"Cannot Parse input '{input}' into a '{pType.Name}' for Parameter '{params(i).Name}' of Method '{_Method.Name}'.")
-            End If
-          End If
+        If (request.HttpMethod.Equals("options", StringComparison.CurrentCultureIgnoreCase)) Then
+          Return Nothing
         End If
-      Next
 
-      Dim resultObject As Object
+        Dim resultObject As Object = Nothing
+        Dim parameterValues As New List(Of Object)
 
-      'this an ambient publication using a ThreadStatic variable
-      Using WebSessionState.IsCurrently(session)
+        Dim decideExceptionCatch As Func(Of Exception, Boolean) = (
+          Function(ex)
+            Dim handled As Boolean = False
+            For Each hook In _RequstHooks
+              hook.OnException(request, session, response, _Service, _Method, ex, handled, resultObject)
+            Next
+            Return handled
+          End Function
+         )
 
-        resultObject = _Method.Invoke(_Service, parameterValues.ToArray())
+        'this an ambient publication using a ThreadStatic variable
+        'TODO: umbau auf AsyncLocal
+        Using WebSessionState.IsCurrently(session)
 
-      End Using
-      'here (on dispose) the ambient publication will be cleared!
+          Try
 
-      Return resultObject
-    End Function
+            Dim skipInvoke As Boolean = False
+            For Each hook In _RequstHooks
+              hook.BeforeInvoke(request, session, response, _Service, _Method, skipInvoke)
+            Next
+
+            If (Not skipInvoke) Then
+
+              SyncLock _ParamterFactories
+                For Each pf In _ParamterFactories
+                  parameterValues.Add(pf.Invoke(request, session, response, serializer, requestCapsle))
+                Next
+              End SyncLock
+
+              Dim params = _Method.GetParameters()
+              For i As Integer = 0 To params.Length - 1
+                If (TypeOf (parameterValues.Item(i)) Is String) Then
+                  Dim pType = params(i).ParameterType
+                  If (Not pType = GetType(String)) Then
+                    Dim input = DirectCast(parameterValues.Item(i), String)
+                    If (Not pType.TryParse(input, parameterValues.Item(i))) Then
+                      Throw New Exception($"Cannot Parse input '{input}' into a '{pType.Name}' for Parameter '{params(i).Name}' of Method '{_Method.Name}'.")
+                    End If
+                  End If
+                End If
+              Next
+
+              resultObject = _Method.Invoke(_Service, parameterValues.ToArray())
+
+            End If
+
+            For Each hook In _RequstHooks
+              hook.AfterInvoke(request, session, response, _Service, _Method, skipInvoke, resultObject)
+            Next
+
+          Catch ex As Exception When decideExceptionCatch.Invoke(ex)
+          End Try
+
+        End Using
+        'here (on dispose) the ambient publication will be cleared!
+
+        Return resultObject
+      End Function
+
+    End Class
 
   End Class
 
-End Class
+End Namespace

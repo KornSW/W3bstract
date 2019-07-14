@@ -1,5 +1,5 @@
 ﻿Imports W3bstract
-Imports W3bstract.WebServiceFacade
+Imports W3bstract.ServiceCommunication.DynamicFacade
 
 Public Class WebApiEntryPoint
   Inherits WebRequestRouter

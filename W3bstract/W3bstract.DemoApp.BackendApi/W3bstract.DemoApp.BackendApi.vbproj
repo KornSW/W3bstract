@@ -89,6 +89,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\W3bstract.DemoApp.BackendApi.Contract\W3bstract.DemoApp.BackendApi.Contract.vbproj">
+      <Project>{24f2fabc-febf-4f94-988f-9a856dadec1a}</Project>
+      <Name>W3bstract.DemoApp.BackendApi.Contract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\W3bstract.WebServiceDTOs\W3bstract.WebServiceDTOs.vbproj">
+      <Project>{97443fd3-2f3c-4976-a415-20963cf0feaf}</Project>
+      <Name>W3bstract.WebServiceDTOs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\W3bstract.WebServiceFacade\W3bstract.WebServiceFacade.vbproj">
       <Project>{0fa42475-8e6c-440f-a3a8-c58a26e8f291}</Project>
       <Name>W3bstract.WebServiceFacade</Name>

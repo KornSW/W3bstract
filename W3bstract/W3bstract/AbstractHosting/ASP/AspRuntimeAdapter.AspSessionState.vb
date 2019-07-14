@@ -115,38 +115,51 @@ Namespace AbstractHosting.ASP
 
       Public Function Remove(key As String) As Boolean Implements IDictionary(Of String, Object).Remove
         _SessionState.Remove(key)
+        Return True
       End Function
 
       Public Function TryGetValue(key As String, ByRef value As Object) As Boolean Implements IDictionary(Of String, Object).TryGetValue
-        Throw New NotImplementedException()
+        Dim results = Me.Enumerate.Where(Function(kvp) kvp.Key = key)
+        If (Not results.Any()) Then
+          Return False
+        End If
+        value = results.Single().Value
+        Return True
       End Function
 
       Public Sub Add(item As KeyValuePair(Of String, Object)) Implements ICollection(Of KeyValuePair(Of String, Object)).Add
-        Throw New NotImplementedException()
+        _SessionState.Add(item.Key, item.Value)
       End Sub
 
       Public Sub Clear() Implements ICollection(Of KeyValuePair(Of String, Object)).Clear
-        Throw New NotImplementedException()
+        _SessionState.Clear()
       End Sub
 
       Public Function Contains(item As KeyValuePair(Of String, Object)) As Boolean Implements ICollection(Of KeyValuePair(Of String, Object)).Contains
-        Me.Add(item.Key, item.Value)
+        Return Me.Enumerate.Where(Function(kvp) kvp.Key = item.Key).Any()
       End Function
 
       Public Sub CopyTo(array() As KeyValuePair(Of String, Object), arrayIndex As Integer) Implements ICollection(Of KeyValuePair(Of String, Object)).CopyTo
-        Throw New NotImplementedException()
+        Me.Enumerate.ToList().CopyTo(array, arrayIndex)
       End Sub
 
       Public Function Remove(item As KeyValuePair(Of String, Object)) As Boolean Implements ICollection(Of KeyValuePair(Of String, Object)).Remove
-        Throw New NotImplementedException()
+        _SessionState.Remove(item.Key)
+        Return True
       End Function
 
       Public Function GetEnumerator() As IEnumerator(Of KeyValuePair(Of String, Object)) Implements IEnumerable(Of KeyValuePair(Of String, Object)).GetEnumerator
-        Throw New NotImplementedException()
+        Return Me.Enumerate.GetEnumerator()
       End Function
 
-      Private Function IEnumerable_GetEnumerator() As IEnumerator Implements IEnumerable.GetEnumerator
-        Throw New NotImplementedException()
+      Private Function GetEnumeratorUntyped() As IEnumerator Implements IEnumerable.GetEnumerator
+        Return Me.Enumerate.GetEnumerator()
+      End Function
+
+      Private Iterator Function Enumerate() As IEnumerable(Of KeyValuePair(Of String, Object))
+        For Each k In _SessionState.Keys.OfType(Of String)
+          Yield New KeyValuePair(Of String, Object)(k, _SessionState(k))
+        Next
       End Function
 
 #Region " IDisposable "
