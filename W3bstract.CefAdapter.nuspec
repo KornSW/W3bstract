@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>W3bstract.CefAdapter</id>
-    <version>1.5.0</version>
+    <version>1.10.0</version>
     <title>"W3bstract" Webhosting Middleware - CefSharp Adapter</title>
     <authors>KornSW</authors>
     <owners>KornSW</owners>
@@ -17,9 +17,9 @@
     <tags>W3bstract HTTP Middleware Webhosting Webserver CefSharp SPA</tags>
     <dependencies>
       <group>
-        <dependency id="W3bstract" version="1.5.0" />
+        <dependency id="W3bstract" version="1.10.0" />
         <dependency id="Newtonsoft.Json" version="12.0.1" />
-        <dependency id="kSystemExtensions" version="2.2.0" />
+        <dependency id="kSystemExtensions" version="2.2.1" />
       </group>
     </dependencies>
   </metadata>

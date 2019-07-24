@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\(Vendor)\NuGet\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.props" Condition="Exists('..\..\(Vendor)\NuGet\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.props')" />
+  <Import Project="..\..\(Vendor)\NuGet\CefSharp.Common.73.1.130\build\CefSharp.Common.props" Condition="Exists('..\..\(Vendor)\NuGet\CefSharp.Common.73.1.130\build\CefSharp.Common.props')" />
+  <Import Project="..\..\(Vendor)\NuGet\cef.redist.x86.73.1.13\build\cef.redist.x86.props" Condition="Exists('..\..\(Vendor)\NuGet\cef.redist.x86.73.1.13\build\cef.redist.x86.props')" />
+  <Import Project="..\..\(Vendor)\NuGet\cef.redist.x64.73.1.13\build\cef.redist.x64.props" Condition="Exists('..\..\(Vendor)\NuGet\cef.redist.x64.73.1.13\build\cef.redist.x64.props')" />
   <Import Project="..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.props" Condition="Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.props')" />
   <Import Project="..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.props" Condition="Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.props')" />
   <Import Project="..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\cef.redist.x86.3.3578.1870\build\cef.redist.x86.props" Condition="Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\cef.redist.x86.3.3578.1870\build\cef.redist.x86.props')" />
@@ -14,9 +18,10 @@
     <AssemblyName>W3bstract.CefAdapter</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
@@ -73,10 +78,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CefSharp.WinForms, Version=63.0.3.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CefSharp.WinForms.63.0.3\CefSharp\x64\CefSharp.WinForms.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -164,19 +165,15 @@
     <Service Include="{94E38DFF-614B-4CBD-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <Import Project="..\..\(Vendor)\NuGet\CefSharp.Common.73.1.130\build\CefSharp.Common.targets" Condition="Exists('..\..\(Vendor)\NuGet\CefSharp.Common.73.1.130\build\CefSharp.Common.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\cef.redist.x64.3.3578.1870\build\cef.redist.x64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\cef.redist.x64.3.3578.1870\build\cef.redist.x64.props'))" />
-    <Error Condition="!Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\cef.redist.x86.3.3578.1870\build\cef.redist.x86.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\cef.redist.x86.3.3578.1870\build\cef.redist.x86.props'))" />
-    <Error Condition="!Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.props'))" />
-    <Error Condition="!Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.targets'))" />
-    <Error Condition="!Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.props'))" />
-    <Error Condition="!Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.targets'))" />
+    <Error Condition="!Exists('..\..\(Vendor)\NuGet\CefSharp.Common.73.1.130\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\(Vendor)\NuGet\CefSharp.Common.73.1.130\build\CefSharp.Common.targets'))" />
+    <Error Condition="!Exists('..\..\(Vendor)\NuGet\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\(Vendor)\NuGet\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.targets'))" />
   </Target>
-  <Import Project="..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.targets" Condition="Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.Common.71.0.2\build\CefSharp.Common.targets')" />
-  <Import Project="..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.targets" Condition="Exists('..\..\..\..\Modules\Base.SystemExtensions\SystemExtensions\CefSharp.WinForms.71.0.2\build\CefSharp.WinForms.targets')" />
+  <Import Project="..\..\(Vendor)\NuGet\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.targets" Condition="Exists('..\..\(Vendor)\NuGet\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

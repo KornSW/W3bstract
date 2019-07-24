@@ -10,7 +10,8 @@
     <AssemblyName>W3bstract.HttpServer</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,9 +44,9 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="kSystemExtensions, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="kSystemExtensions, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\(Vendor)\NuGet\kSystemExtensions.2.2.0\lib\{tfm}\kSystemExtensions.dll</HintPath>
+      <HintPath>..\..\(Vendor)\NuGet\kSystemExtensions.2.2.1\lib\{tfm}\kSystemExtensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

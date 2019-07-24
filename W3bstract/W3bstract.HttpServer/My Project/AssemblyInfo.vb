@@ -11,5 +11,5 @@ Imports System.Runtime.InteropServices
 <Assembly: CLSCompliant(True)>
 <Assembly: ComVisible(False)>
 <Assembly: Guid("a63a8fa4-bcc8-4b6f-a959-dace892b3802")>
-<Assembly: AssemblyVersion("1.5.0.0")>
-<Assembly: AssemblyFileVersion("1.5.0.0")>
+<Assembly: AssemblyVersion("1.10.0.0")>
+<Assembly: AssemblyFileVersion("1.10.0.0")>
