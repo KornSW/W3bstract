@@ -344,26 +344,66 @@ Public Class WebRequestRouter
     End If
 
     Dim target As IWebRequestHandler = Nothing
-    target = Me.FindTarget(childFragment)
+    Dim hooks As IRawRequestHook() = Nothing
 
+    target = Me.FindTarget(childFragment, hooks)
     If (target IsNot Nothing) Then
-      target.ProcessRequest(request, response, state)
+      Me.InvokeHandler(target, hooks, request, response, state)
+
     ElseIf (_DefaultResourceIsBoundToUnregisteredSuburls AndAlso Me.DefaultResource IsNot Nothing) Then
-      target = Me.FindTarget(Me.DefaultResource)
-      target.ProcessRequest(request, response, state)
+      target = Me.FindTarget(Me.DefaultResource, hooks)
+      Me.InvokeHandler(target, hooks, request, response, state)
 
     ElseIf (Me.ErrorPageHandler IsNot Nothing) Then
-      Me.ErrorPageHandler.ProcessRequest(request, response, state)
+      Me.InvokeHandler(Me.ErrorPageHandler, {}, request, response, state)
+
     Else
       response.StatusCode = 404 'NOT FOUND
     End If
 
   End Sub
 
-  Protected Function FindTarget(childFragment As String) As IWebRequestHandler
+  Protected Sub InvokeHandler(handler As IWebRequestHandler, hooks As IRawRequestHook(), request As IWebRequest, response As IWebResponse, session As IWebSessionState)
+
+    If (hooks.Length < 1) Then
+      handler.ProcessRequest(request, response, session)
+      Exit Sub
+    End If
+
+    Dim skip As Boolean = False
+    For Each hook In hooks
+      hook.BeforeProcess(request, session, response, skip)
+    Next
+    If (Not skip) Then
+      Try
+        handler.ProcessRequest(request, response, session)
+      Catch ex As Exception When Me.TryHandleExOverHooks(ex, hooks, request, response, session)
+      End Try
+    End If
+    For Each hook In hooks
+      hook.AfterProcess(request, session, response, skip)
+    Next
+  End Sub
+
+  Protected Function TryHandleExOverHooks(ex As Exception, hooks As IRawRequestHook(), request As IWebRequest, response As IWebResponse, session As IWebSessionState) As Boolean
+    Dim catchException As Boolean = False
+    For Each hook In hooks
+      hook.OnCatchingException(request, session, response, ex, catchException)
+    Next
+    Return catchException
+  End Function
+
+  Protected Function FindTarget(childFragment As String, ByRef requestHooks As IRawRequestHook()) As IWebRequestHandler
 
     SyncLock _Childs
       If (_Childs.ContainsKey(childFragment)) Then
+
+        If (_RequestHooks.ContainsKey(childFragment)) Then
+          requestHooks = _RequestHooks(childFragment)
+        Else
+          requestHooks = {}
+        End If
+
         Return _Childs(childFragment)
       End If
     End SyncLock
@@ -371,7 +411,7 @@ Public Class WebRequestRouter
     SyncLock _Extenders
       For Each ext In _Extenders
         Dim target As IWebRequestHandler
-        target = ext.FindTarget(childFragment)
+        target = ext.FindTarget(childFragment, requestHooks)
         If (target IsNot Nothing) Then
           Return target
         End If

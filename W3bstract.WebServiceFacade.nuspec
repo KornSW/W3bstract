@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>W3bstract.WebServiceFacade</id>
-    <version>1.10.0</version>
+    <version>1.10.1</version>
     <title>"W3bstract" Webhosting Middleware - WebService Facade</title>
     <authors>KornSW</authors>
     <owners>KornSW</owners>

@@ -179,11 +179,11 @@ Namespace DynamicFacade
 
         Dim decideExceptionCatch As Func(Of Exception, Boolean) = (
           Function(ex)
-            Dim handled As Boolean = False
+            Dim catchException As Boolean = False
             For Each hook In _RequstHooks
-              hook.OnException(request, session, response, _Service, _Method, ex, handled, resultObject)
+              hook.OnException(request, session, response, _Service, _Method, ex, catchException, resultObject)
             Next
-            Return handled
+            Return catchException
           End Function
          )
 

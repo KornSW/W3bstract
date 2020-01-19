@@ -134,22 +134,27 @@
     <ProjectReference Include="..\W3bstract.CefAdapter\W3bstract.CefAdapter.vbproj">
       <Project>{fccc927d-5bb6-4c7a-ab0f-5a2de1551829}</Project>
       <Name>W3bstract.CefAdapter</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\W3bstract.DemoApp.AngularSpaBundle\W3bstract.DemoApp.SpaBundle.vbproj">
       <Project>{02a6df02-b077-4ab3-8741-ced5cbd7d53b}</Project>
       <Name>W3bstract.DemoApp.SpaBundle</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\W3bstract.DemoApp.BackendApi\W3bstract.DemoApp.BackendApi.vbproj">
       <Project>{94114fb4-458f-4b4e-80fb-149dc4bf9ce0}</Project>
       <Name>W3bstract.DemoApp.BackendApi</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\W3bstract.WebServiceFacade\W3bstract.WebServiceFacade.vbproj">
       <Project>{0fa42475-8e6c-440f-a3a8-c58a26e8f291}</Project>
       <Name>W3bstract.WebServiceFacade</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\W3bstract\W3bstract.vbproj">
       <Project>{b46080d0-cfad-4d6a-b964-86b0858e742c}</Project>
       <Name>W3bstract</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
