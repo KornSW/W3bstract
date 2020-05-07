@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>W3bstract.WebServiceConnector</id>
-    <version>1.10.0</version>
+    <version>1.10.0-localbuild</version>
     <title>"W3bstract" Webhosting Middleware - WebService Facade</title>
     <authors>KornSW</authors>
     <owners>KornSW</owners>
@@ -17,9 +17,9 @@
     <tags>W3bstract HTTP Middleware Webhosting Webserver</tags>
     <dependencies>
       <group>
-        <dependency id="Newtonsoft.Json" version="12.0.1" />
-        <dependency id="W3bstract.WebServiceDTOs" version="1.10.0" />
-        <dependency id="kSystemExtensions" version="2.2.1" />
+        <dependency id="Newtonsoft.Json" version="[12.0.3,12.9999]" />
+        <dependency id="kSystemExtensions" version="[2.3.7,2.9999]" />
+        <dependency id="W3bstract.WebServiceDTOs" version="[1.10.0,1.9999]" />
       </group>
     </dependencies>
   </metadata>
@@ -27,9 +27,9 @@
     
     <!-- https://docs.microsoft.com/en-us/nuget/create-packages/creating-a-package#from-a-convention-based-working-directory -->
     
-    <file src="W3bstract\W3bstract.WebServiceConnector\bin\Release\W3bstract.WebServiceConnector.dll" target="lib/{tfm}" />
-    <file src="W3bstract\W3bstract.WebServiceConnector\bin\Release\W3bstract.WebServiceConnector.xml" target="lib/{tfm}" />
-    <file src="W3bstract\W3bstract.WebServiceConnector\bin\Release\W3bstract.WebServiceConnector.pdb" target="lib/{tfm}" />
+    <file src="(Stage)\Bin\W3bstract.WebServiceConnector.dll" target="lib/{tfm}" />
+    <file src="(Stage)\Bin\W3bstract.WebServiceConnector.xml" target="lib/{tfm}" />
+    <file src="(Stage)\Bin\W3bstract.WebServiceConnector.pdb" target="lib/{tfm}" />
     
   </files>
 </package>

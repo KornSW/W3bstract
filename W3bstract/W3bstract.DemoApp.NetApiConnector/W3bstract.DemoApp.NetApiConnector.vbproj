@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\%28Stage%29\Bin\</OutputPath>
     <DocumentationFile>W3bstract.DemoApp.NetApiConnector.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
@@ -31,7 +31,7 @@
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\%28Stage%29\Bin\</OutputPath>
     <DocumentationFile>W3bstract.DemoApp.NetApiConnector.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
@@ -56,6 +56,21 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="W3bstract.DemoApp.BackendApi.Contract, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\(Stage)\Bin\W3bstract.DemoApp.BackendApi.Contract.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="W3bstract.WebServiceConnector, Version=1.10.0.26482, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\(Stage)\Bin\W3bstract.WebServiceConnector.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="W3bstract.WebServiceDTOs, Version=1.10.0.26481, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\(Stage)\Bin\W3bstract.WebServiceDTOs.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ModuleMain.vb" />
@@ -94,20 +109,6 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\W3bstract.DemoApp.BackendApi.Contract\W3bstract.DemoApp.BackendApi.Contract.vbproj">
-      <Project>{24f2fabc-febf-4f94-988f-9a856dadec1a}</Project>
-      <Name>W3bstract.DemoApp.BackendApi.Contract</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\W3bstract.WebServiceConnector\W3bstract.WebServiceConnector.vbproj">
-      <Project>{b32ddb6b-e503-49fe-a93b-0249c3147bf2}</Project>
-      <Name>W3bstract.WebServiceConnector</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\W3bstract.WebServiceDTOs\W3bstract.WebServiceDTOs.vbproj">
-      <Project>{97443fd3-2f3c-4976-a415-20963cf0feaf}</Project>
-      <Name>W3bstract.WebServiceDTOs</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>W3bstract.CefAdapter</id>
-    <version>1.10.0</version>
+    <version>1.10.0-localbuild</version>
     <title>"W3bstract" Webhosting Middleware - CefSharp Adapter</title>
     <authors>KornSW</authors>
     <owners>KornSW</owners>
@@ -17,9 +17,9 @@
     <tags>W3bstract HTTP Middleware Webhosting Webserver CefSharp SPA</tags>
     <dependencies>
       <group>
-        <dependency id="W3bstract" version="1.10.0" />
-        <dependency id="Newtonsoft.Json" version="12.0.1" />
-        <dependency id="kSystemExtensions" version="2.2.1" />
+        <dependency id="Newtonsoft.Json" version="[12.0.3,12.9999]" />
+        <dependency id="kSystemExtensions" version="[2.3.7,2.9999]" />
+        <dependency id="W3bstract" version="[1.10.0,1.9999]" />
       </group>
     </dependencies>
   </metadata>
@@ -27,29 +27,29 @@
     
     <!-- https://docs.microsoft.com/en-us/nuget/create-packages/creating-a-package#from-a-convention-based-working-directory -->
     
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\W3bstract.CefAdapter.dll" target="lib/{tfm}" />
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\W3bstract.CefAdapter.xml" target="lib/{tfm}" />
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\W3bstract.CefAdapter.pdb" target="lib/{tfm}" />
+    <file src="(Stage)\Bin\W3bstract.CefAdapter.dll" target="lib/{tfm}" />
+    <file src="(Stage)\Bin\W3bstract.CefAdapter.xml" target="lib/{tfm}" />
+    <file src="(Stage)\Bin\W3bstract.CefAdapter.pdb" target="lib/{tfm}" />
     
     <!-- CefCharp .NET-Assemblies -->
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\CefSharp.Core.dll" target="lib/{tfm}" />
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\CefSharp.dll" target="lib/{tfm}" />    
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\CefSharp.WinForms.dll" target="lib/{tfm}" />
+    <file src="(Stage)\Bin\CefSharp.Core.dll" target="lib/{tfm}" />
+    <file src="(Stage)\Bin\CefSharp.dll" target="lib/{tfm}" />    
+    <file src="(Stage)\Bin\CefSharp.WinForms.dll" target="lib/{tfm}" />
 
     <!-- CefCharp non-.NET Runtimes -->
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\CefSharp.BrowserSubprocess.exe" target="CefRuntimes" />
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\CefSharp.BrowserSubprocess.Core.dll" target="CefRuntimes" />
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\chrome_elf.dll" target="CefRuntimes" />
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\d3dcompiler_47.dll" target="CefRuntimes" />
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\libcef.dll" target="CefRuntimes" />
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\libEGL.dll" target="CefRuntimes" />
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\libGLESv2.dll" target="CefRuntimes" />
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\libcef.dll" target="CefRuntimes" />
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\*.bin" target="CefRuntimes" />
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\*.dat" target="CefRuntimes" />
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\*.pak" target="CefRuntimes" />
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\locales\*.*" target="CefRuntimes/locales" />
-    <file src="W3bstract\W3bstract.CefAdapter\bin\Release86\swiftshader\*.*" target="CefRuntimes/swiftshader"/>
+    <file src="(Stage)\Bin\CefSharp.BrowserSubprocess.exe" target="CefRuntimes" />
+    <file src="(Stage)\Bin\CefSharp.BrowserSubprocess.Core.dll" target="CefRuntimes" />
+    <file src="(Stage)\Bin\chrome_elf.dll" target="CefRuntimes" />
+    <file src="(Stage)\Bin\d3dcompiler_47.dll" target="CefRuntimes" />
+    <file src="(Stage)\Bin\libcef.dll" target="CefRuntimes" />
+    <file src="(Stage)\Bin\libEGL.dll" target="CefRuntimes" />
+    <file src="(Stage)\Bin\libGLESv2.dll" target="CefRuntimes" />
+    <file src="(Stage)\Bin\libcef.dll" target="CefRuntimes" />
+    <file src="(Stage)\Bin\*.bin" target="CefRuntimes" />
+    <file src="(Stage)\Bin\*.dat" target="CefRuntimes" />
+    <file src="(Stage)\Bin\*.pak" target="CefRuntimes" />
+    <file src="(Stage)\Bin\locales\*.*" target="CefRuntimes/locales" />
+    <file src="(Stage)\Bin\swiftshader\*.*" target="CefRuntimes/swiftshader"/>
 
     <!-- Build-Targets zum kopieren der CefCharp non-.NET Runtimes in den build-output -->
     <file src="W3bstract\W3bstract.CefAdapter\CopyCefRuntimesToOutdir.targets" target="build/net46/CopyCefRuntimesToOutdir.targets" />

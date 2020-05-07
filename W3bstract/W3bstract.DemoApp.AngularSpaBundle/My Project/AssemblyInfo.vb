@@ -2,34 +2,18 @@
 Imports System.Reflection
 Imports System.Runtime.InteropServices
 
-' General Information about an assembly is controlled through the following 
-' set of attributes. Change these attribute values to modify the information
-' associated with an assembly.
-
-' Review the values of the assembly attributes
-
 <Assembly: AssemblyTitle("Demo-APP")>
 <Assembly: AssemblyDescription("Demo-APP for the W3bstract Webhosting Middleware")>
-<Assembly: AssemblyCompany("KornSW")>
 <Assembly: AssemblyProduct("W3bstract")>
+
+<Assembly: AssemblyCompany("KornSW")>
 <Assembly: AssemblyCopyright("KornSW")>
 <Assembly: AssemblyTrademark("KornSW")>
 
+<Assembly: CLSCompliant(True)>
 <Assembly: ComVisible(False)>
+<Assembly: Guid("4a8b79c5-413f-4907-980d-dce8a03ba05f")>
 
-'The following GUID is for the ID of the typelib if this project is exposed to COM
-<Assembly: Guid("4a8b79c5-413f-4907-980d-dce8a03ba05f")> 
-
-' Version information for an assembly consists of the following four values:
-'
-'      Major Version
-'      Minor Version 
-'      Build Number
-'      Revision
-'
-' You can specify all the values or you can default the Build and Revision Numbers 
-' by using the '*' as shown below:
-' <Assembly: AssemblyVersion("1.0.*")> 
-
-<Assembly: AssemblyVersion("1.0.0.0")> 
-<Assembly: AssemblyFileVersion("1.0.0.0")> 
+<Assembly: AssemblyVersion("0.1.0.*")>
+<Assembly: AssemblyInformationalVersion("0.1.0-localbuild")>
+'DONT ADD: AssemblyFileVersion(...) !!!!!

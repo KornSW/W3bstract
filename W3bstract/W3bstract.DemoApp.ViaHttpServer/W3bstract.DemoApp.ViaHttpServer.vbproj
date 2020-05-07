@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <StartupObject>W3bstract.HttpServer.Demo.Module1</StartupObject>
     <RootNamespace>W3bstract.HttpServer.Demo</RootNamespace>
-    <AssemblyName>W3bstract.HttpServer.Demo</AssemblyName>
+    <AssemblyName>W3bstract.DemoApp.HttpSvr</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Console</MyType>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
@@ -21,8 +21,9 @@
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>W3bstract.HttpServer.Demo.xml</DocumentationFile>
+    <OutputPath>..\..\%28Stage%29\Bin\</OutputPath>
+    <DocumentationFile>
+    </DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -31,8 +32,9 @@
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>W3bstract.HttpServer.Demo.xml</DocumentationFile>
+    <OutputPath>..\..\%28Stage%29\Bin\</OutputPath>
+    <DocumentationFile>
+    </DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
@@ -48,6 +50,11 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\(Stage)\Bin\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -56,17 +63,41 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
-  </ItemGroup>
-  <ItemGroup>
-    <Import Include="Microsoft.VisualBasic" />
-    <Import Include="System" />
-    <Import Include="System.Collections" />
-    <Import Include="System.Collections.Generic" />
-    <Import Include="System.Data" />
-    <Import Include="System.Diagnostics" />
-    <Import Include="System.Linq" />
-    <Import Include="System.Xml.Linq" />
-    <Import Include="System.Threading.Tasks" />
+    <Reference Include="W3bstract, Version=1.11.0.26481, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\(Stage)\Bin\W3bstract.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="W3bstract.DemoApp.AngularSpaBundle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\(Stage)\Bin\W3bstract.DemoApp.AngularSpaBundle.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="W3bstract.DemoApp.BackendApi, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\(Stage)\Bin\W3bstract.DemoApp.BackendApi.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="W3bstract.DemoApp.BackendApi.Contract, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\(Stage)\Bin\W3bstract.DemoApp.BackendApi.Contract.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="W3bstract.HttpServer, Version=1.10.0.26482, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\(Stage)\Bin\W3bstract.HttpServer.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="W3bstract.WebServiceDTOs, Version=1.10.0.26481, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\(Stage)\Bin\W3bstract.WebServiceDTOs.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="W3bstract.WebServiceFacade, Version=1.10.0.26482, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\(Stage)\Bin\W3bstract.WebServiceFacade.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Module1.vb" />
