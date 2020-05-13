@@ -28,6 +28,14 @@ Public Class WebServiceClient(Of TServiceContract)
     Me.Facade = DynamicProxy.CreateInstance(Of TServiceContract)(Me)
   End Sub
 
+  Private Function CollectAmbientPayload() As CallParameter()
+    Dim snapshot As New List(Of CallParameter)
+    For Each ambienceChannel As IAmbienceChannel In _AmbienceChannels
+      ambienceChannel.InjectOutgoingData(snapshot)
+    Next
+    Return snapshot.ToArray()
+  End Function
+
   Private Shared _CookieContainer As New CookieContainer()
 
   Public Function InvokeMethod(methodName As String, arguments() As Object, argumentNames As String()) As Object Implements IDynamicProxyInvoker.InvokeMethod
@@ -36,6 +44,7 @@ Public Class WebServiceClient(Of TServiceContract)
     requestBag.CallArguments.MethodName = methodName
 
     requestBag.CallArguments.MethodArguments = Me.ConvertArgs(arguments, argumentNames).ToArray()
+    requestBag.CallArguments.AmbientPayload = Me.CollectAmbientPayload().ToArray()
 
     Dim rawResponse = ExtendedWebClient.GetInstance().UploadString(_Url, "POST", Xaml.Serialize(requestBag))
 
@@ -59,12 +68,5 @@ Public Class WebServiceClient(Of TServiceContract)
       Yield New CallParameter With {.ParamName = argumentNames(i), .Value = arguments(i)}
     Next
   End Function
-
-  '<DebuggerBrowsable(DebuggerBrowsableState.Never)>
-  'Friend ReadOnly Property Webclient As ExtendedWebClient
-  '  Get
-  '    Return _WebClient
-  '  End Get
-  'End Property
 
 End Class

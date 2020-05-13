@@ -1,57 +1,29 @@
 ﻿Imports System
+Imports System.Collections.Generic
 
-Public Enum ResponseStatus
-  Unknown = 0
-  OK = 200
-  InternalServerError = 1
-  BadRequest = 400
-  Forbidden = 403
-  Unauthorized = 401
-End Enum
-
-Public Class ServiceRequest
-  Public Property AuthData As ServiceAuthArguments = Nothing
-  Public Property CallArguments As ServiceCallArguments = Nothing
+<Obsolete>
+Public Class AmbienceDataBag
+  Inherits List(Of CallParameter)
 End Class
 
-Public Class ServiceAuthArguments
-  Public Property Token As String = Nothing
-  Public Property AuthId As String = Nothing
-  Public Property AuthHash As String = Nothing
+<Obsolete()>
+Public Class WebServiceRequest
+
+  Public Property MethodName As String
+  Public Property RequestArguments As WebServiceArgument()
+  Public Property GenericArgumentTypeNames As String()
+  Public Property AmbientData As AmbienceDataBag
+
 End Class
 
-Public Class ServiceCallArguments
-  Public Property MethodName As String = Nothing
-  Public Property MethodArguments As CallParameter() = {}
-  Public Property AmbientPayload As CallParameter() = Nothing
-End Class
+<Obsolete()>
+Public Class WebServiceArgument
 
-Public Class ServiceResponse
-  Public Property Status As ResponseStatus
-  Public Property ErrorDetails As ServiceErrorDetails = Nothing
-  Public Property CallResultData As ServiceCallResults = Nothing
-End Class
+  Public Property ParamName As String
+  Public Property TypeName As String
+  Public Property Value As Object
 
-Public Class ServiceErrorDetails
-  Public Property ErrorKey As String
-  Public Property Placeholders As String() = {}
-  Public Property MessageEN As String
 End Class
-
-Public Class ServiceCallResults
-  Public Property ReturnValue As Object = Nothing
-  Public Property ReturnTypeName As String = Nothing
-  Public Property ByRefResults As CallParameter() = {}
-  Public Property AmbientPayload As CallParameter() = Nothing
-End Class
-
-Public Class CallParameter
-  Public Property ParamName As String = ""
-  Public Property Value as Object = Nothing
-  Public Property TypeName As String = Nothing
-End Class
-
-#Region " LEGACY "
 
 <Obsolete()>
 Public Class WebServiceResponse
@@ -76,69 +48,6 @@ End Class
 Public Class ArrayResponse
   Public Property Data As Array
 End Class
-
-#Region " Attributes "
-
-<AttributeUsage(AttributeTargets.Parameter, AllowMultiple:=False)>
-Public Class PostBodyAttribute
-  Inherits Attribute
-  Public Sub New()
-  End Sub
-End Class
-
-<AttributeUsage(AttributeTargets.Parameter, AllowMultiple:=False)>
-Public Class SessionStateAttribute
-  Inherits Attribute
-  Public Sub New()
-  End Sub
-End Class
-
-<AttributeUsage(AttributeTargets.Parameter, AllowMultiple:=False)>
-Public Class UrlParamAttribute
-  Inherits Attribute
-  Public Sub New(Optional key As String = Nothing)
-    Me.Key = key
-  End Sub
-
-  Public ReadOnly Property Key As String
-
-End Class
-
-<AttributeUsage(AttributeTargets.Parameter, AllowMultiple:=False)>
-Public Class RequestHeaderAttribute
-  Inherits Attribute
-  Public Sub New(Optional key As String = Nothing)
-    Me.Key = key
-  End Sub
-
-  Public ReadOnly Property Key As String
-
-End Class
-
-<AttributeUsage(AttributeTargets.Method, AllowMultiple:=True)>
-Public Class RequireSecurityRoleAttribute
-  Inherits Attribute
-
-  Public Sub New(ParamArray andLinkedRoleNames() As String)
-    Me.RoleNames = andLinkedRoleNames
-  End Sub
-
-  Public ReadOnly Property RoleNames As String()
-
-End Class
-
-<AttributeUsage(AttributeTargets.Parameter, AllowMultiple:=False)>
-Public Class CoockieValueAttribute
-  Inherits Attribute
-  Public Sub New(Optional key As String = Nothing)
-    Me.Key = key
-  End Sub
-
-  Public ReadOnly Property Key As String
-
-End Class
-
-#End Region
 
 <Obsolete()>
 Public Class DataRequest
@@ -302,5 +211,3 @@ Public Class DataSetResponse(Of TData)
   Public Property TotalItemCount As Integer
 
 End Class
-
-#End Region

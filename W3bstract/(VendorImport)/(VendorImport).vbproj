@@ -49,6 +49,10 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AmbientScoping">
+      <HintPath>..\..\(Vendor)\NuGet\AmbientScoping.1.0.1-localbuild\lib\{tfm}\AmbientScoping.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="kSystemExtensions, Version=2.3.7.142, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\(Vendor)\NuGet\kSystemExtensions.2.3.7.142\lib\{tfm}\kSystemExtensions.dll</HintPath>
     </Reference>

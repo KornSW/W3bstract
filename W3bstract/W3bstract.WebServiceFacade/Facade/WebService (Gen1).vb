@@ -9,21 +9,7 @@ Imports W3bstract.ServiceCommunication.Serialization
 
 Namespace DynamicFacade
 
-  Public Class WebMethodDescriptor
-
-    Public Property MethodName As String
-    Public Property ReturnTypeName As String
-    Public Property Arguments As WebArgumentDescriptor()
-
-  End Class
-
-  Public Class WebArgumentDescriptor
-    Public Property ArgumentName As String
-    Public Property ArgumentTypeName As String
-    Public Property IsByRef As Boolean = False
-
-  End Class
-
+  <Obsolete("please use WebServiceFacade")>
   Public Class WebService(Of TServiceContract)
     Implements IWebRequestHandler
 
@@ -236,6 +222,21 @@ Namespace DynamicFacade
     End Sub
 
 #End Region
+
+  End Class
+
+  Public Class WebMethodDescriptor
+
+    Public Property MethodName As String
+    Public Property ReturnTypeName As String
+    Public Property Arguments As WebArgumentDescriptor()
+
+  End Class
+
+  Public Class WebArgumentDescriptor
+    Public Property ArgumentName As String
+    Public Property ArgumentTypeName As String
+    Public Property IsByRef As Boolean = False
 
   End Class
 

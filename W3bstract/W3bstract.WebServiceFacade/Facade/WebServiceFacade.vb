@@ -21,11 +21,19 @@ Namespace DynamicFacade
 
     Private _Service As TServiceContract
     Private _RequstHooks As IWebServiceRequestHook()
+    Private _AmbienceChannels As IAmbienceChannel()
     Private _Methods As Dictionary(Of String, MethodInvokationAdapter)
     Private _LockObj As New Object
 
     Public Sub New(serviceInstance As TServiceContract, ParamArray requstHooks() As IWebServiceRequestHook)
       _Service = serviceInstance
+      _AmbienceChannels = {}
+      _RequstHooks = requstHooks
+    End Sub
+
+    Public Sub New(serviceInstance As TServiceContract, ambienceChannels() As IAmbienceChannel, requstHooks() As IWebServiceRequestHook)
+      _Service = serviceInstance
+      _AmbienceChannels = ambienceChannels
       _RequstHooks = requstHooks
     End Sub
 
@@ -106,6 +114,10 @@ Namespace DynamicFacade
           Exit Sub
         End If
 
+        'PREPARE AMBIENCE ROOM
+        Me.DistributeAmbientPayload(requestDto.CallArguments.AmbientPayload)
+
+        'PROCESS THE SERVICE CALL
         result = method.Invoke(request, session, response, serializer, requestDto)
 
         If (requestDto Is Nothing) Then
@@ -258,6 +270,12 @@ Namespace DynamicFacade
 
       End Try
 
+    End Sub
+
+    Private Sub DistributeAmbientPayload(snapshot As CallParameter())
+      For Each ambienceChannel As IAmbienceChannel In _AmbienceChannels
+        ambienceChannel.ProcessIncommingData(snapshot)
+      Next
     End Sub
 
     'HACK: Umbauen auf konfigurativ
