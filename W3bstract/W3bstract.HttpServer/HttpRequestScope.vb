@@ -4,6 +4,7 @@ Imports System.Collections.Generic
 Imports System.Collections.Specialized
 Imports System.Diagnostics
 Imports System.IO
+Imports System.Linq
 Imports System.Net
 Imports System.Net.Sockets
 Imports System.Threading
@@ -24,7 +25,7 @@ Public Class HttpRequestScope
   Private _HttpMethod As [String]
   Private _HttpUrl As [String]
   Private _HttpProtocolVersionString As [String]
-  Private _HttpHeaders As New Hashtable()
+  Private _HttpHeaders As New NameValueCollection
   Private _PostData As New NameValueCollection
   Private _MaxPostSizeBytes As Integer = 10 * 1024 * 1024 ' 10MB
   Private _RemoteIP As IPAddress
@@ -68,30 +69,21 @@ Public Class HttpRequestScope
     End Get
   End Property
 
-  Public ReadOnly Property Headers As Hashtable
+  Public ReadOnly Property Headers As NameValueCollection Implements IWebRequest.Headers
     Get
       Return _HttpHeaders
     End Get
   End Property
 
-
-
-
   Public ReadOnly Property HttpMethod As String Implements IWebRequest.HttpMethod
     Get
-      Throw New NotImplementedException()
+      Return _HttpMethod
     End Get
   End Property
 
   Public ReadOnly Property InputStream As Stream Implements IWebRequest.InputStream
     Get
-      Throw New NotImplementedException()
-    End Get
-  End Property
-
-  Private ReadOnly Property IWebRequest_Headers As NameValueCollection Implements IWebRequest.Headers
-    Get
-      Throw New NotImplementedException()
+      Return _InputStream
     End Get
   End Property
 
@@ -103,15 +95,9 @@ Public Class HttpRequestScope
 
   Public ReadOnly Property Browser As String Implements IWebRequest.Browser
     Get
-      Throw New NotImplementedException()
+      Return String.Empty
     End Get
   End Property
-
-
-
-
-
-
 
   Private Function StreamReadLine(inputStream As Stream) As String
     Dim next_char As Integer
@@ -172,7 +158,7 @@ Public Class HttpRequestScope
         _OutputStream.WriteLine("Connection: close")
         _OutputStream.WriteLine(ex.ToFullString(True))
       End If
-      ReplyFailure404()
+      Me.ReplyFailure404()
     End Try
 
     _OutputStream.Flush()
@@ -204,7 +190,7 @@ Public Class HttpRequestScope
 
   Public Sub ReadHeaders()
     Console.WriteLine("readHeaders()")
-    Dim line As [String]
+    Dim line As String = Nothing
     While (InlineAssignHelper(line, StreamReadLine(_InputStream))) IsNot Nothing
       If line.Equals("") Then
         Console.WriteLine("got headers")
@@ -245,7 +231,9 @@ Public Class HttpRequestScope
     Dim content_len As Integer = 0
 
     Dim ms As New MemoryStream()
-    If Me._HttpHeaders.ContainsKey("Content-Length") Then
+
+    If (_HttpHeaders.AllKeys.Contains("Content-Length")) Then
+
       content_len = Convert.ToInt32(Me._HttpHeaders("Content-Length"))
       If content_len > _MaxPostSizeBytes Then
         Throw New Exception([String].Format("POST Content-Length({0}) too big for this simple server", content_len))

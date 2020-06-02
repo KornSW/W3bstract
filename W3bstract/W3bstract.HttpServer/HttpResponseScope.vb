@@ -44,24 +44,34 @@ Public Class HttpResponseScope
 
   Public ReadOnly Property ContentWriter As TextWriter Implements IWebResponse.ContentWriter
     Get
+      'HACK: muss eigneltich beim ersten Write auf den stream passieren
       If (Not _HeadersWritten) Then
         Me.WriteHeaders()
-        'Throw New InvalidOperationException("StreamWriter is only available after WriteHeaders has been called")
       End If
 
       Return _OutputWriter
     End Get
   End Property
 
+  Public ReadOnly Property Stream As Stream Implements IWebResponse.Stream
+    Get
+      'HACK: muss eigneltich beim ersten Write auf den stream passieren
+      If (Not _HeadersWritten) Then
+        Me.WriteHeaders()
+      End If
+
+      Return _OutputWriter.BaseStream
+    End Get
+  End Property
+
+
+
+
   Public Sub AddCustomHeader(key As String, rawValue As String)
     _HttpHeaders.Add(key, rawValue)
   End Sub
 
-  Public ReadOnly Property Stream As Stream Implements IWebResponse.Stream
-    Get
-      Return _OutputWriter.BaseStream
-    End Get
-  End Property
+
 
   Private _StatusCode As Integer = 200
   Public Property StatusCode As Integer Implements IWebResponse.StatusCode
@@ -94,6 +104,9 @@ Public Class HttpResponseScope
       _OutputWriter.WriteLine(Convert.ToString("Content-Type: ") & _ContentMimeType)
       _OutputWriter.WriteLine("Connection: close")
       _OutputWriter.WriteLine("")
+      _HeadersWritten = True
+      _OutputWriter.Flush()
+      _OutputWriter.BaseStream.Flush()
     End If
   End Sub
 

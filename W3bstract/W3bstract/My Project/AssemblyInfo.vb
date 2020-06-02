@@ -16,6 +16,6 @@ Imports System.Runtime.InteropServices
 <Assembly: Guid("eba03288-d0bf-44d9-a641-3696f7dd22c7")>
 <Assembly: InternalsVisibleTo("W3bstract.WebServiceFacade")>
 
-<Assembly: AssemblyVersion("1.11.0.*")>
-<Assembly: AssemblyInformationalVersion("1.11.0-localbuild")>
+<Assembly: AssemblyVersion("1.11.1.*")>
+<Assembly: AssemblyInformationalVersion("1.11.1-localbuild")>
 'DONT ADD: AssemblyFileVersion(...) !!!!!

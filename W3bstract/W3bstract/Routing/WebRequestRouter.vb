@@ -87,6 +87,7 @@ Public Class WebRequestRouter
       Case ".xml" : Return "application/xml"
       Case ".xaml" : Return "application/xml"
       Case ".json" : Return "application/json"
+      Case ".js" : Return "application/javascript"
 
       Case ".txt", ".log" : Return "text/plain"
       Case ".css" : Return "text/css"
@@ -194,7 +195,11 @@ Public Class WebRequestRouter
       subUrl = "/"
     End If
     If (subUrl.EndsWith("/")) Then
-      subUrl = subUrl + fullResourceName.Substring(defaultNamespace.Length + 1)
+      If (String.IsNullOrWhiteSpace(defaultNamespace)) Then
+        subUrl = subUrl + fullResourceName
+      Else
+        subUrl = subUrl + fullResourceName.Substring(defaultNamespace.Length + 1)
+      End If
     End If
     Dim handler As New StreamResourceHandler(Function() assembly.GetManifestResourceStream(fullResourceName), mimeType, keepInMemory)
     Me.RegisterDynamicTarget(handler, subUrl, setAsDefault)
