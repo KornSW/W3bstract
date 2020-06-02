@@ -49,12 +49,12 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AmbientScoping">
-      <HintPath>..\..\(Vendor)\NuGet\AmbientScoping.1.0.1-localbuild\lib\{tfm}\AmbientScoping.dll</HintPath>
+    <Reference Include="AmbientScoping, Version=1.0.1.221, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\(Vendor)\NuGet\AmbientScoping.1.0.1.221\lib\{tfm}\AmbientScoping.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="kSystemExtensions, Version=2.3.7.142, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\(Vendor)\NuGet\kSystemExtensions.2.3.7.142\lib\{tfm}\kSystemExtensions.dll</HintPath>
+    <Reference Include="kSystemExtensions, Version=2.3.7.172, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\(Vendor)\NuGet\kSystemExtensions.2.3.7.172\lib\{tfm}\kSystemExtensions.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\(Vendor)\NuGet\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
