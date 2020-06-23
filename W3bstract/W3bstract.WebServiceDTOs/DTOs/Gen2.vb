@@ -42,3 +42,17 @@ Public Class CallParameter
   Public Property Value As Object = Nothing
   Public Property TypeName As String = Nothing
 End Class
+
+Public Class ItemReferer
+  Public Property ItemClass As String
+  Public Property Identifier As Long
+  Public Property DisplayLabel As String
+  Public Property IconB64 As String = String.Empty
+End Class
+
+Public Class GuidBasedItemReferer
+  Public Property ItemClass As String
+  Public Property Identifier As Guid
+  Public Property DisplayLabel As String
+  Public Property IconB64 As String = String.Empty
+End Class

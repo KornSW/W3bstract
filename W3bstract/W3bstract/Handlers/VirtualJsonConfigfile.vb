@@ -26,6 +26,7 @@ Public Class BrowserWindowObjectStrapper
     End If
     If (Me.ObjectToStrap IsNot Nothing) Then
       Dim serializedObject As String = JsonConvert.SerializeObject(Me.ObjectToStrap)
+      response.ContentMimeType = "application/javascript"
       response.ContentWriter.Write("window." + Me.ObjectName + " = " + serializedObject)
     End If
   End Sub

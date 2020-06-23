@@ -62,12 +62,11 @@ Public Class DataRequest(Of TArgument)
 
 End Class
 
-<Obsolete()>
 Public Class DataSetRequest
   Inherits DataSetRequest(Of Object)
 End Class
 
-<Obsolete()>
+
 Public Class ConstraintFilter
 
   Public Property Name As String
@@ -75,7 +74,6 @@ Public Class ConstraintFilter
 
 End Class
 
-<Obsolete()>
 Public Class DataSetRequest(Of TArgument)
   Inherits DataRequest(Of TArgument)
 
@@ -92,41 +90,50 @@ Public Class DataSetRequest(Of TArgument)
 
 End Class
 
-<Obsolete()>
 Public Class DataResponse
+
+  <Obsolete()>
   Public Property Status As ResponseStatus = ResponseStatus.OK
+
+  <Obsolete()>
   Public Message As String
 
 #Region " Convenience "
 
+  <Obsolete()>
   Public Shared Function OK() As DataResponse
     Return New DataResponse()
   End Function
 
+  <Obsolete()>
   Public Shared Function BadRequest(Optional message As String = Nothing) As DataResponse
     Dim r As New DataResponse
     r.SetStatusBadRequest(message)
     Return r
   End Function
 
+  <Obsolete()>
   Public Shared Function Forbidden(Optional message As String = Nothing) As DataResponse
     Dim r As New DataResponse
     r.SetStatusForbidden(message)
     Return r
   End Function
 
+  <Obsolete()>
   Public Shared Function InternalServerError(Optional message As String = Nothing) As DataResponse
     Dim r As New DataResponse
     r.SetStatusInternalServerError(message)
     Return r
   End Function
 
+  <Obsolete()>
   Public Shared Function Unauthorized(Optional message As String = Nothing) As DataResponse
     Dim r As New DataResponse
     r.SetStatusUnauthorized(message)
     Return r
   End Function
 
+  <Obsolete()>
   Public Sub SetStatusBadRequest(Optional message As String = Nothing)
     Me.Status = ResponseStatus.BadRequest
     If (message Is Nothing) Then
@@ -135,6 +142,7 @@ Public Class DataResponse
     Me.Message = message
   End Sub
 
+  <Obsolete()>
   Public Sub SetStatusForbidden(Optional message As String = Nothing)
     Me.Status = ResponseStatus.Forbidden
     If (message Is Nothing) Then
@@ -143,6 +151,7 @@ Public Class DataResponse
     Me.Message = message
   End Sub
 
+  <Obsolete()>
   Public Sub SetStatusInternalServerError(Optional message As String = Nothing)
     Me.Status = ResponseStatus.InternalServerError
     If (message Is Nothing) Then
@@ -151,6 +160,7 @@ Public Class DataResponse
     Me.Message = message
   End Sub
 
+  <Obsolete()>
   Public Sub SetStatusUnauthorized(Optional message As String = Nothing)
     Me.Status = ResponseStatus.Unauthorized
     If (message Is Nothing) Then
@@ -163,6 +173,7 @@ Public Class DataResponse
 
 End Class
 
+<Obsolete("Please use ItemReferer or GuidBasedItemReferer dto")>
 Public Class NameAndId
 
   Public Property Name As String
@@ -184,21 +195,6 @@ Public Class ScalarDataResponse(Of TData)
 
 End Class
 
-<Obsolete()>
-Public Class DataSetResponse
-  Inherits DataResponse
-
-  Public Property Data As Array = New Object() {}
-
-  Public Property PageNumber As Integer
-  Public Property TotalPageCount As Integer
-  Public Property FromItemNumber As Integer
-  Public Property ToItemNumber As Integer
-  Public Property TotalItemCount As Integer
-
-End Class
-
-<Obsolete()>
 Public Class DataSetResponse(Of TData)
   Inherits DataResponse
 
@@ -209,5 +205,10 @@ Public Class DataSetResponse(Of TData)
   Public Property FromItemNumber As Integer
   Public Property ToItemNumber As Integer
   Public Property TotalItemCount As Integer
+
+End Class
+
+Public Class DataSetResponse
+  Inherits DataSetResponse(Of Object)
 
 End Class
