@@ -3,6 +3,7 @@ Imports System.Collections.Generic
 Imports System.ComponentModel
 Imports System.Diagnostics
 Imports System.IO
+Imports System.Linq
 Imports System.Reflection
 Imports W3bstract.ServiceCommunication.Serialization
 
@@ -183,7 +184,9 @@ Namespace DynamicFacade
 
             'HACK: automatic wrapping into DataResponse Classes
             If (TypeOf (result) Is Array) Then
-              result = New DataSetResponse With {.Data = DirectCast(result, Array)}
+              Dim objArr As Object()
+              objArr = DirectCast(result, Array).Cast(Of Object).ToArray()
+              result = New DataSetResponse With {.Data = objArr}
               'result = New ArrayResponse With {.Data = DirectCast(result, Array)}
             ElseIf (Not TypeOf (result) Is DataResponse) Then
               result = New ScalarDataResponse With {.Data = result}
@@ -206,9 +209,9 @@ Namespace DynamicFacade
 
           'wrap into a responseCaplse
           Dim responseCaplse = New ServiceResponse With {
-              .CallResultData = New ServiceCallResults With {.ReturnValue = result},
-              .Status = ResponseStatus.OK
-          }
+                        .CallResultData = New ServiceCallResults With {.ReturnValue = result},
+                        .Status = ResponseStatus.OK
+                    }
 
           If (result IsNot Nothing) Then
             responseCaplse.CallResultData.ReturnTypeName = result.GetType().Name
