@@ -47,12 +47,12 @@ Public Class ItemReferer
   Public Property ItemClass As String
   Public Property Identifier As Long
   Public Property DisplayLabel As String
-  Public Property IconB64 As String = String.Empty
+  Public Property Icon As Byte() = Nothing
 End Class
 
 Public Class GuidBasedItemReferer
   Public Property ItemClass As String
   Public Property Identifier As Guid
   Public Property DisplayLabel As String
-  Public Property IconB64 As String = String.Empty
+  Public Property Icon As Byte() = Nothing
 End Class
