@@ -89,21 +89,38 @@ Namespace DynamicFacade
           Exit Sub
         End Try
 
+        Dim postBody As String = Nothing
+        If (request.HttpMethod = "POST" OrElse request.HttpMethod = "PUT") Then
+          Using sr As New StreamReader(request.InputStream)
+            postBody = sr.ReadToEnd()
+          End Using
+        End If
 
         urlValiables.TryGetItem("Method", True, methodName)
-
-
         If (String.IsNullOrWhiteSpace(methodName)) Then
-          'FALLBACK TO NEW MODE
-          Dim postBody As String = Nothing
-          If (request.HttpMethod = "POST" OrElse request.HttpMethod = "PUT") Then
-            Using sr As New StreamReader(request.InputStream)
-              postBody = sr.ReadToEnd()
-            End Using
-          End If
-          If (Not String.IsNullOrWhiteSpace(postBody)) Then
-            requestDto = DirectCast(serializer.Deserialize(postBody, GetType(ServiceRequest)), ServiceRequest)
+          If (String.IsNullOrWhiteSpace(postBody)) Then
+            methodName = request.HttpMethod
+          Else
+            'TO NEW MODE - ALWAYS POST
+            requestDto = serializer.Deserialize(Of ServiceRequest)(postBody)
             methodName = requestDto.CallArguments.MethodName
+          End If
+        End If
+
+        If (requestDto Is Nothing) Then
+          'OLD MODE
+          requestDto = New ServiceRequest
+          requestDto.CallArguments = New ServiceCallArguments
+          requestDto.CallArguments.MethodName = methodName
+          If (Not String.IsNullOrWhiteSpace(postBody)) Then
+            Dim anonymousObject = serializer.Deserialize(postBody)
+            Dim params As New List(Of CallParameter)
+            For Each prop In anonymousObject.GetType().GetProperties()
+              If (prop.CanRead) Then
+                params.Add(New CallParameter With {.ParamName = prop.Name, .Value = prop.GetValue(anonymousObject)})
+              End If
+            Next
+            requestDto.CallArguments.MethodArguments = params.ToArray()
           End If
         End If
 
@@ -183,7 +200,7 @@ Namespace DynamicFacade
 
             'HACK: automatic wrapping into DataResponse Classes
             If (TypeOf (result) Is Array) Then
-              result = New DataSetResponse With {.Data = DirectCast(result, Array)}
+              result = New DataSetResponse With {.Data = DirectCast(result, Array).CastTo(Of Object())}
               'result = New ArrayResponse With {.Data = DirectCast(result, Array)}
             ElseIf (Not TypeOf (result) Is DataResponse) Then
               result = New ScalarDataResponse With {.Data = result}
