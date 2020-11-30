@@ -49,8 +49,8 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AmbientScoping, Version=1.0.1.291, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\(Vendor)\NuGet\AmbientScoping.1.0.1.291\lib\{tfm}\AmbientScoping.dll</HintPath>
+    <Reference Include="AmbientScoping, Version=1.0.1.325, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\(Vendor)\NuGet\AmbientScoping.1.0.1.325\lib\{tfm}\AmbientScoping.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="kSystemExtensions, Version=2.3.7.304, Culture=neutral, PublicKeyToken=null">
