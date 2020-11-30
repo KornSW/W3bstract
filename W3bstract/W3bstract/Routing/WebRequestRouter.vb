@@ -271,7 +271,7 @@ Public Class WebRequestRouter
 
       End If
 
-      subRouter.RegisterDynamicTarget(handler, subUrl, setAsDefault)
+      subRouter.RegisterDynamicTarget(handler, subUrl, setAsDefault, requestHooks)
       Exit Sub
     End If
 

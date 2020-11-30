@@ -4,6 +4,7 @@ Imports System.Collections.Specialized
 Imports System.Diagnostics
 Imports System.IO
 Imports System.Net
+Imports System.Text
 
 Namespace AbstractHosting.InMemory
 
@@ -15,6 +16,17 @@ Namespace AbstractHosting.InMemory
       Me.Url = New Uri(url)
       Me.InputStream = inputStream
     End Sub
+
+    Public Sub New(httpMethod As String, url As String, rawPayload As String)
+      MyClass.New(httpMethod, url, WrapToStream(rawPayload))
+    End Sub
+    Private Shared Function WrapToStream(rawPayload As String) As Stream
+      Dim stream As New MemoryStream
+      Dim buffer As Byte() = Encoding.UTF8.GetBytes(rawPayload)
+      stream.Write(buffer, 0, buffer.Length)
+      stream.Position = 0
+      Return stream
+    End Function
 
 #Region " Properties "
 

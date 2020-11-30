@@ -18,12 +18,18 @@ Public Class WebServiceClient(Of TServiceContract)
   Private _AmbienceChannels() As IAmbienceChannel
 
   Public Shared Function CreateInstance(url As String, ParamArray ambienceChannels() As IAmbienceChannel) As TServiceContract
-    Dim inst As New WebServiceClient(Of TServiceContract)(url, ambienceChannels)
+    Dim inst As New WebServiceClient(Of TServiceContract)(url, AddressOf ProcessHttpCall, ambienceChannels)
     Return inst.Facade
   End Function
 
-  Private Sub New(url As String, ambienceChannels() As IAmbienceChannel)
+  Public Shared Function CreateInstance(url As String, rawRequestProcessingMethod As RawRequestProcessingDelegate, ParamArray ambienceChannels() As IAmbienceChannel) As TServiceContract
+    Dim inst As New WebServiceClient(Of TServiceContract)(url, rawRequestProcessingMethod, ambienceChannels)
+    Return inst.Facade
+  End Function
+
+  Private Sub New(url As String, rawRequestProcessingMethod As RawRequestProcessingDelegate, ambienceChannels() As IAmbienceChannel)
     Me.Url = url
+    _RawRequestProcessingMethod = rawRequestProcessingMethod
     _AmbienceChannels = ambienceChannels
     Me.Facade = DynamicProxy.CreateInstance(Of TServiceContract)(Me)
   End Sub
@@ -38,6 +44,15 @@ Public Class WebServiceClient(Of TServiceContract)
 
   Private Shared _CookieContainer As New CookieContainer()
 
+  Private _RawRequestProcessingMethod As RawRequestProcessingDelegate
+
+  Public Delegate Function RawRequestProcessingDelegate(address As String, methodVerb As String, payload As String) As String
+
+  Protected Shared Function ProcessHttpCall(address As String, methodVerb As String, payload As String) As String
+    Dim rawResponse = ExtendedWebClient.GetInstance().UploadString(address, methodVerb, payload)
+    Return rawResponse
+  End Function
+
   Public Function InvokeMethod(methodName As String, arguments() As Object, argumentNames As String()) As Object Implements IDynamicProxyInvoker.InvokeMethod
     Dim requestBag As New ServiceRequest
     requestBag.CallArguments = New ServiceCallArguments
@@ -46,7 +61,8 @@ Public Class WebServiceClient(Of TServiceContract)
     requestBag.CallArguments.MethodArguments = Me.ConvertArgs(arguments, argumentNames).ToArray()
     requestBag.CallArguments.AmbientPayload = Me.CollectAmbientPayload().ToArray()
 
-    Dim rawResponse = ExtendedWebClient.GetInstance().UploadString(_Url, "POST", Xaml.Serialize(requestBag))
+    'Dim rawResponse = ExtendedWebClient.GetInstance().UploadString(_Url, "POST", Xaml.Serialize(requestBag))
+    Dim rawResponse = _RawRequestProcessingMethod.Invoke(_Url, "POST", Xaml.Serialize(requestBag))
 
     'Dim req = HttpWebRequest.CreateHttp(_Url)
     'req.CookieContainer = _CookieContainer
@@ -57,6 +73,10 @@ Public Class WebServiceClient(Of TServiceContract)
     'Dim resp = DirectCast(req.GetResponse, HttpWebResponse)
     'Dim respStr = resp.GetResponseStream
     'Dim rawResponse = respStr.ReadAllText()
+
+    If (String.IsNullOrWhiteSpace(rawResponse)) Then
+      Return Nothing
+    End If
 
     Dim responseBag = Xaml.Deserialize(Of ServiceResponse)(rawResponse)
 

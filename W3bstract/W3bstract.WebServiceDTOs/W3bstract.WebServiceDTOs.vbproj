@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Attributes.vb" />
     <Compile Include="JsonSupport\ByteArraySerializedAsB64String.vb" />
+    <Compile Include="JsonSupport\SerializeLongAsBase32.vb" />
     <Compile Include="ResponseStatus.vb" />
     <Compile Include="IAmbienceChannel.vb" />
     <Compile Include="DTOs\Gen2.vb" />

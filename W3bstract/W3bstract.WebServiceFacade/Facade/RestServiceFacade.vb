@@ -10,16 +10,9 @@ Imports W3bstract.ServiceCommunication.Serialization
 
 Namespace DynamicFacade
 
-  Public Interface IWebServiceFacade
-    Inherits IWebRequestHandler
-
-    'Property ExceptionMessageDisarmingMethod As Func(Of IWebRequest, Exception, String)
-    Property ExceptionHandlingStrategy As IExceptionHandlingStrategy
-
-  End Interface
-
-  Partial Public Class WebServiceFacade(Of TServiceContract)
+  Partial Public Class RestServiceFacade(Of TServiceContract)
     Implements IWebServiceFacade
+    Implements IContractSupplier
 
     Private _Service As TServiceContract
     Private _RequstHooks As IWebServiceRequestHook()
@@ -65,6 +58,42 @@ Namespace DynamicFacade
         End If
       End SyncLock
     End Function
+
+    Public Sub DefineContract(contractUrlNode As UrlNodeDescriptor, models As List(Of Type)) Implements IContractSupplier.DefineContract
+      SyncLock _LockObj
+        For Each knownMethod In Me.Methods
+          Dim methodInfo = knownMethod.Value.Method
+          Dim nameChamelCase As String = methodInfo.Name.Substring(0, 1).ToLower() + methodInfo.Name.Substring(1)
+
+          Dim virtualNodeOnMethodLevel As UrlNodeDescriptor
+          If (contractUrlNode.SubnodesPerName.ContainsKey(nameChamelCase)) Then
+            virtualNodeOnMethodLevel = contractUrlNode.SubnodesPerName(nameChamelCase)
+          Else
+            virtualNodeOnMethodLevel = New UrlNodeDescriptor
+            contractUrlNode.SubnodesPerName.Add(nameChamelCase, virtualNodeOnMethodLevel)
+          End If
+
+          Dim od As New OperationDescriptor
+
+          'sobald by ref da ist eine trage kapseö {OperationName}Result bauen
+          ' darin names args fr das byref + ReturnValue Property
+          'clientgenerator wird dann erkennen, dass er bei namensgleichehit byref generiert!!!!
+
+
+
+
+
+
+
+          od.OperationId = nameChamelCase
+          od.RequestPayloadType =
+
+          od.ResponsePayloadType
+
+          virtualNodeOnMethodLevel.OperationsPerVerb.Add("post", od)
+        Next
+      End SyncLock
+    End Sub
 
     Public Sub ProcessRequest(request As IWebRequest, response As IWebResponse, session As IWebSessionState) Implements IWebRequestHandler.ProcessRequest
       Dim serializer As IWebSerializer = Nothing

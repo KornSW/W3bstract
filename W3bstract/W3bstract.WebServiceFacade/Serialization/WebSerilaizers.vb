@@ -1,6 +1,7 @@
 ﻿Imports System
 Imports System.Collections.Generic
 Imports Newtonsoft.Json
+Imports W3bstract.ServiceCommunication.JsonSupport
 
 Namespace Serialization
 
@@ -8,7 +9,8 @@ Namespace Serialization
 
     ReadOnly Property MimeType As String
     Function Serialize(input As Object) As String
-    Function Deserialize(input As String, targetType As Type) As Object
+    Function Deserialize(input As String, Optional explicitTargetType As Type = Nothing) As Object
+    Function Deserialize(Of T)(input As String) As T
 
   End Interface
 
@@ -33,7 +35,12 @@ Namespace Serialization
               Return Xaml.Serialize(obj)
             End Function,
             Function(str, tpe)
-              Return Xaml.Deserialize(str, tpe)
+              If (tpe Is Nothing) Then
+                Return Xaml.Deserialize(str)
+              Else
+                Return Xaml.Deserialize(str, tpe)
+              End If
+
             End Function
           )
 
@@ -41,13 +48,16 @@ Namespace Serialization
             newInstance = New WebSerializer(
             "application/json",
             Function(obj)
-              Dim s As New JsonSerializerSettings
-              's.TypeNameHandling = TypeNameHandling.Objects
-              's.Formatting = Formatting.Indented
+              Dim s = BuildJsonSerializerSettings()
               Return JsonConvert.SerializeObject(obj, s)
             End Function,
             Function(str, tpe)
-              Return JsonConvert.DeserializeObject(str, tpe)
+              Dim s = BuildJsonSerializerSettings()
+              If (tpe Is Nothing) Then
+                Return JsonConvert.DeserializeObject(str, s)
+              Else
+                Return JsonConvert.DeserializeObject(str, tpe, s)
+              End If
             End Function
           )
 
@@ -57,6 +67,18 @@ Namespace Serialization
         _Instances.Add(formatName, newInstance)
         Return newInstance
       End SyncLock
+    End Function
+
+    Friend Shared Function BuildJsonSerializerSettings() As JsonSerializerSettings
+
+      Dim s As New JsonSerializerSettings
+      's.TypeNameHandling = TypeNameHandling.Objects
+      's.Formatting = Formatting.Indented
+
+      s.Converters.Add(New SerializeLongInQuots)
+
+
+      Return s
     End Function
 
     Private _SerializationMethod As Func(Of Object, String) = Nothing
@@ -74,8 +96,12 @@ Namespace Serialization
       Return _SerializationMethod.Invoke(input)
     End Function
 
-    Public Function Deserialize(input As String, targetType As Type) As Object Implements IWebSerializer.Deserialize
-      Return _DeserializationMethod.Invoke(input, targetType)
+    Public Function Deserialize(input As String, Optional explicitTargetType As Type = Nothing) As Object Implements IWebSerializer.Deserialize
+      Return _DeserializationMethod.Invoke(input, explicitTargetType)
+    End Function
+
+    Public Function Deserialize(Of T)(input As String) As T Implements IWebSerializer.Deserialize
+      Return DirectCast(_DeserializationMethod.Invoke(input, GetType(T)), T)
     End Function
 
   End Class

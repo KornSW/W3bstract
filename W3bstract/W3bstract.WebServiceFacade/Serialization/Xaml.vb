@@ -50,6 +50,10 @@ Namespace Serialization
       Return targetObject
     End Function
 
+    Public Shared Function Deserialize(sourceString As String) As Object
+      Return Deserialize(sourceString, Nothing)
+    End Function
+
     Public Shared Function Deserialize(sourceString As String, targetObjectType As Type) As Object
 
       Dim strReader As StringReader
@@ -60,7 +64,7 @@ Namespace Serialization
       xmlReader = XmlReader.Create(strReader)
       targetObject = XamlReader.Load(xmlReader)
 
-      If (Not targetObjectType.IsAssignableFrom(targetObject.GetType())) Then
+      If (targetObjectType IsNot Nothing AndAlso Not targetObjectType.IsAssignableFrom(targetObject.GetType())) Then
         Throw New Exception($"Deserialized Object Type ('{targetObject.GetType().Name}') does not match to the requested targetObjectType '{targetObjectType.Name}'")
       End If
 

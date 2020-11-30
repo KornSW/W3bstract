@@ -2,6 +2,7 @@
 Imports System.Collections.Generic
 Imports System.Diagnostics
 Imports System.IO
+Imports System.Text
 
 Namespace AbstractHosting.InMemory
 
@@ -59,6 +60,18 @@ Namespace AbstractHosting.InMemory
         End If
       End Set
     End Property
+
+    Public Function ToRawString() As String
+      If (Not Me.Stream.CanRead) Then
+        Return String.Empty
+      End If
+      Dim rawResponse As String
+      Me.Stream.Position = 0
+      Using rdr As New StreamReader(Me.Stream, Encoding.UTF8)
+        rawResponse = rdr.ReadToEnd()
+      End Using
+      Return rawResponse
+    End Function
 
 #Region " IDisposable "
 

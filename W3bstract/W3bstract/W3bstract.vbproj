@@ -77,7 +77,10 @@
     <Compile Include="AbstractHosting\inMEM\InMemoryWebResponse.vb" />
     <Compile Include="AbstractHosting\inMEM\InMemoryWebSessionStateManager.vb" />
     <Compile Include="AbstractHosting\IWebRuntimeHost.vb" />
+    <Compile Include="AbstractHosting\RawRequestPocessor.vb" />
+    <Compile Include="Description\ContractDescriptor.vb" />
     <Compile Include="ExtensionsForIWebSessionState.vb" />
+    <Compile Include="Description\IContractSupplier.vb" />
     <Compile Include="IWebSessionStateManager.vb" />
     <Compile Include="AbstractHosting\IWebSiteConfig.vb" />
     <Compile Include="ExtensionsForIWebRequest.vb" />
