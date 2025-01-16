@@ -17,9 +17,9 @@
     <tags>W3bstract HTTP Middleware Webhosting Webserver CefSharp SPA</tags>
     <dependencies>
       <group>
-        <dependency id="Newtonsoft.Json" version="[12.0.3,12.9999]" />
-        <dependency id="kSystemExtensions" version="[2.3.7,2.9999]" />
-        <dependency id="W3bstract" version="[1.11.2,1.9999]" />
+        <dependency id="Newtonsoft.Json" version="13.0.3" />
+        <dependency id="kSystemExtensions" version="2.3.7" />
+        <dependency id="W3bstract" version="1.11.2" />
       </group>
     </dependencies>
   </metadata>
