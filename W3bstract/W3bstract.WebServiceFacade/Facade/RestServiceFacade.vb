@@ -1,431 +1,431 @@
-﻿Imports System
-Imports System.Collections.Generic
-Imports System.ComponentModel
-Imports System.Diagnostics
-Imports System.IO
-Imports System.Linq
-Imports System.Reflection
-Imports W3bstract.ServiceCommunication.Description
-Imports W3bstract.ServiceCommunication.Serialization
-
-Namespace DynamicFacade
-
-  Partial Public Class RestServiceFacade(Of TServiceContract)
-    Implements IWebServiceFacade
-    Implements IContractSupplier
-
-    Private _Service As TServiceContract
-    Private _RequstHooks As IWebServiceRequestHook()
-    Private _AmbienceChannels As IAmbienceChannel()
-    Private _Methods As Dictionary(Of String, MethodInvokationAdapter)
-    Private _LockObj As New Object
-
-    Public Sub New(serviceInstance As TServiceContract, ParamArray requstHooks() As IWebServiceRequestHook)
-      _Service = serviceInstance
-      _AmbienceChannels = {}
-      _RequstHooks = requstHooks
-    End Sub
-
-    Public Sub New(serviceInstance As TServiceContract, ambienceChannels() As IAmbienceChannel, requstHooks() As IWebServiceRequestHook)
-      _Service = serviceInstance
-      _AmbienceChannels = ambienceChannels
-      _RequstHooks = requstHooks
-    End Sub
-
-    Private ReadOnly Property Methods As Dictionary(Of String, MethodInvokationAdapter)
-      Get
-        If (_Methods Is Nothing) Then
-          'build the index...
-          _Methods = New Dictionary(Of String, MethodInvokationAdapter)
-          For Each m In GetType(TServiceContract).GetMethods()
-            If (m.IsPublic) Then
-              _Methods.Add(m.Name.ToLower(), New MethodInvokationAdapter(_Service, m, _RequstHooks))
-            End If
-          Next
-        End If
-
-        Return _Methods
-      End Get
-    End Property
-
-    Private Function GetMethodByName(methodName As String) As MethodInvokationAdapter
-      SyncLock _LockObj
-        methodName = methodName.ToLower()
-        If (Me.Methods.ContainsKey(methodName)) Then
-          Return Me.Methods(methodName)
-        Else
-          Return Nothing
-        End If
-      End SyncLock
-    End Function
-
-    Public Sub DefineContract(contractUrlNode As UrlNodeDescriptor, models As List(Of Type)) Implements IContractSupplier.DefineContract
-      SyncLock _LockObj
-        For Each knownMethod In Me.Methods
-          Dim methodInfo = knownMethod.Value.Method
-          Dim nameChamelCase As String = methodInfo.Name.Substring(0, 1).ToLower() + methodInfo.Name.Substring(1)
-
-          Dim virtualNodeOnMethodLevel As UrlNodeDescriptor
-          If (contractUrlNode.SubnodesPerName.ContainsKey(nameChamelCase)) Then
-            virtualNodeOnMethodLevel = contractUrlNode.SubnodesPerName(nameChamelCase)
-          Else
-            virtualNodeOnMethodLevel = New UrlNodeDescriptor
-            contractUrlNode.SubnodesPerName.Add(nameChamelCase, virtualNodeOnMethodLevel)
-          End If
-
-          Dim od As New OperationDescriptor
-
-          'sobald by ref da ist eine trage kapseö {OperationName}Result bauen
-          ' darin names args fr das byref + ReturnValue Property
-          'clientgenerator wird dann erkennen, dass er bei namensgleichehit byref generiert!!!!
-
-
-
-
-
-
-
-          od.OperationId = nameChamelCase
-          od.RequestPayloadType =
-
-          od.ResponsePayloadType
-
-          virtualNodeOnMethodLevel.OperationsPerVerb.Add("post", od)
-        Next
-      End SyncLock
-    End Sub
-
-    Public Sub ProcessRequest(request As IWebRequest, response As IWebResponse, session As IWebSessionState) Implements IWebRequestHandler.ProcessRequest
-      Dim serializer As IWebSerializer = Nothing
-      Dim requestDto As ServiceRequest = Nothing '<<< NEW WAY!!!
-      Dim methodName As String = String.Empty
-
-      Try
-
-        If (request.HttpMethod.Equals("options", StringComparison.CurrentCultureIgnoreCase)) Then
-          response.StatusCode = 200 'OK
-          Exit Sub
-        End If
-
-        Dim result As Object = Nothing
-        Dim writer As New StreamWriter(response.Stream)
-        Dim urlValiables = request.ParseQuery()
-
-        Dim communicationFormatName = "xaml"
-        If (request.Headers.Item("Content-Type") = "application/json") Then
-          communicationFormatName = "json"
-        End If
-        urlValiables.TryGetItem("Format", True, communicationFormatName)
-
-        Try
-          serializer = WebSerializer.GetInstanceByFormatName(communicationFormatName)
-        Catch ex As Exception
-          writer.Write("Unknown Format!")
-          Exit Sub
-        End Try
-
-        Dim postBody As String = Nothing
-        If (request.HttpMethod = "POST" OrElse request.HttpMethod = "PUT") Then
-          Using sr As New StreamReader(request.InputStream)
-            postBody = sr.ReadToEnd()
-          End Using
-        End If
-
-        urlValiables.TryGetItem("Method", True, methodName)
-        If (String.IsNullOrWhiteSpace(methodName)) Then
-          If (String.IsNullOrWhiteSpace(postBody)) Then
-            methodName = request.HttpMethod
-          Else
-            'TO NEW MODE - ALWAYS POST
-            requestDto = serializer.Deserialize(Of ServiceRequest)(postBody)
-            methodName = requestDto.CallArguments.MethodName
-          End If
-        End If
-
-        If (requestDto Is Nothing) Then
-          'OLD MODE
-          requestDto = New ServiceRequest
-          requestDto.CallArguments = New ServiceCallArguments
-          requestDto.CallArguments.MethodName = methodName
-          If (Not String.IsNullOrWhiteSpace(postBody)) Then
-            Dim anonymousObject = serializer.Deserialize(postBody)
-            Dim params As New List(Of CallParameter)
-            For Each prop In anonymousObject.GetType().GetProperties()
-              If (prop.CanRead) Then
-                params.Add(New CallParameter With {.ParamName = prop.Name, .Value = prop.GetValue(anonymousObject)})
-              End If
-            Next
-            requestDto.CallArguments.MethodArguments = params.ToArray()
-          End If
-        End If
-
-        Dim method = Me.GetMethodByName(methodName)
-        If (method Is Nothing) Then
-          response.StatusCode = 501 'not implmented
-          writer.Write("Unknown Method!")
-          Exit Sub
-        End If
-
-        'PREPARE AMBIENCE ROOM
-        Me.DistributeAmbientPayload(requestDto.CallArguments.AmbientPayload)
-
-        'PROCESS THE SERVICE CALL
-        result = method.Invoke(request, session, response, serializer, requestDto)
-
-        If (requestDto Is Nothing) Then
-          '##### BEG OLD WAY ################################################
-
-          If (result Is Nothing) Then
-            Exit Sub 'idr. bei OPTIONS COMMANDO!!!
-
-          ElseIf (TypeOf (result) Is String) Then
-            response.ContentWriter.Write(DirectCast(result, String))
-
-          ElseIf (TypeOf (result) Is Byte()) Then
-            Dim resultBa = DirectCast(result, Byte())
-            response.Stream.Write(resultBa, 0, resultBa.Length)
-
-          ElseIf (TypeOf (result) Is Stream) Then
-            If (TypeOf (result) Is MimeTaggedStream) Then
-              response.ContentMimeType = DirectCast(result, MimeTaggedStream).MimeType
-            Else
-              response.ContentMimeType = "application/octet-stream"
-            End If
-            DirectCast(result, Stream).CopyTo(response.Stream)
-
-          ElseIf (TypeOf (result) Is Drawing.Image) Then
-            response.ContentMimeType = "image/png"
-            DirectCast(result, Drawing.Image).Save(response.Stream, Drawing.Imaging.ImageFormat.Png)
-
-          ElseIf (TypeOf (result) Is FileInfo) Then
-            With DirectCast(result, FileInfo)
-
-              If (Not .Exists) Then
-                response.ContentMimeType = "text/plain"
-                response.ContentWriter.Write("File not found!")
-                Exit Sub
-              End If
-
-              response.Header("Content-Disposition") = $"attachment; filename=""{ .Name }"""
-
-              Select Case .Extension.ToLower()
-                Case ".htm", ".html" : response.ContentMimeType = "text/html"
-                Case ".jpg", ".jpeg" : response.ContentMimeType = "image/jpeg"
-                Case ".png" : response.ContentMimeType = "image/png"
-                Case ".xml" : response.ContentMimeType = "application/xml"
-                Case ".pdf" : response.ContentMimeType = "application/pdf"
-                Case Else : response.ContentMimeType = "application/octet-stream"
-              End Select
-
-              Using fs As New FileStream(.FullName, FileMode.Open, FileAccess.Read, FileShare.Read)
-                fs.CopyTo(response.Stream)
-              End Using
-
-            End With
-
-          Else 'REGULAR RESULT OBJECT
-
-            'response.HeaderEncoding = System.Text.Encoding.UTF8
-            'response.Headers.Add("Content-Type", "application/json")
-
-            'If (TypeOf (result) Is Array) Then
-            '    result = New DataSetResponse With {.Data = DirectCast(result, Array)}
-            '    'result = New ArrayResponse With {.Data = DirectCast(result, Array)}
-            '  End If
-
-            'HACK: automatic wrapping into DataResponse Classes
-            If (TypeOf (result) Is Array) Then
-              Dim objArr As Object()
-              objArr = DirectCast(result, Array).Cast(Of Object).ToArray()
-              result = New DataSetResponse With {.Data = objArr}
-              'result = New ArrayResponse With {.Data = DirectCast(result, Array)}
-            ElseIf (Not TypeOf (result) Is DataResponse) Then
-              result = New ScalarDataResponse With {.Data = result}
-            End If
-            Dim sr As String = serializer.Serialize(result)
-            response.ContentMimeType = serializer.MimeType
-            response.ContentWriter.Write(sr)
-
-          End If
-
-          '##### END OLD WAY ################################################
-        Else
-          '##### BEG NEW WAY ################################################
-
-
-
-          'TODO: Sonderfälle dass returnvalue Stream, Image oder FileInfo ist!!!!
-
-
-
-          'wrap into a responseCaplse
-          Dim responseCaplse = New ServiceResponse With {
-                        .CallResultData = New ServiceCallResults With {.ReturnValue = result},
-                        .Status = ResponseStatus.OK
-                    }
-
-          If (result IsNot Nothing) Then
-            responseCaplse.CallResultData.ReturnTypeName = result.GetType().Name
-          End If
-
-          Dim serializedResult As String = serializer.Serialize(responseCaplse)
-          response.ContentMimeType = serializer.MimeType
-          response.ContentWriter.Write(serializedResult)
-
-          '##### END NEW WAY ################################################
-
-        End If
-
-      Catch ex As Exception
-
-        If (TypeOf ex Is TargetInvocationException AndAlso ex.InnerException IsNot Nothing) Then
-          ex = ex.InnerException
-        End If
-
-        'Me.HandleError(ex, request, response, session)
-
-        Dim responseDto As New ServiceResponse With {.ErrorDetails = New ServiceErrorDetails}
-        responseDto.Status = ResponseStatus.InternalServerError
-        responseDto.ErrorDetails.MessageEN = "internal server error"
-        responseDto.ErrorDetails.ErrorKey = "INTERNAL_SERVER_ERROR"
-
-        Me.GetExceptionHandlingStrategy(methodName).HandleException(methodName, ex, request, session, requestDto, responseDto)
-
-        If (serializer Is Nothing) Then
-          response.StatusCode = responseDto.Status
-          response.ContentMimeType = "text/plain"
-          response.ContentWriter.Write(responseDto.ErrorDetails.MessageEN)
-          Exit Sub
-        End If
-
-        '##### BEG OLD WAY ################################################
-        If (requestDto Is Nothing) Then
-          Dim errResponse As New ErrorResponse
-          errResponse.MessageEN = responseDto.ErrorDetails.MessageEN
-          errResponse.Key = responseDto.ErrorDetails.ErrorKey
-          errResponse.Placeholders = responseDto.ErrorDetails.Placeholders
-          Try
-            Dim serializedResult As String = serializer.Serialize(errResponse)
-            response.ContentMimeType = serializer.MimeType
-            response.ContentWriter.Write(serializedResult)
-          Catch
-          End Try
-
-          Exit Sub '<<<<<<<<<<<
-        End If
-        '##### END OLD WAY ################################################
+﻿'Imports System
+'Imports System.Collections.Generic
+'Imports System.ComponentModel
+'Imports System.Diagnostics
+'Imports System.IO
+'Imports System.Linq
+'Imports System.Reflection
+'Imports W3bstract.ServiceCommunication.Description
+'Imports W3bstract.ServiceCommunication.Serialization
+
+'Namespace DynamicFacade
+
+'  Partial Public Class RestServiceFacade(Of TServiceContract)
+'    Implements IWebServiceFacade
+'    Implements IContractSupplier
+
+'    Private _Service As TServiceContract
+'    Private _RequstHooks As IWebServiceRequestHook()
+'    Private _AmbienceChannels As IAmbienceChannel()
+'    Private _Methods As Dictionary(Of String, MethodInvokationAdapter)
+'    Private _LockObj As New Object
+
+'    Public Sub New(serviceInstance As TServiceContract, ParamArray requstHooks() As IWebServiceRequestHook)
+'      _Service = serviceInstance
+'      _AmbienceChannels = {}
+'      _RequstHooks = requstHooks
+'    End Sub
+
+'    Public Sub New(serviceInstance As TServiceContract, ambienceChannels() As IAmbienceChannel, requstHooks() As IWebServiceRequestHook)
+'      _Service = serviceInstance
+'      _AmbienceChannels = ambienceChannels
+'      _RequstHooks = requstHooks
+'    End Sub
+
+'    Private ReadOnly Property Methods As Dictionary(Of String, MethodInvokationAdapter)
+'      Get
+'        If (_Methods Is Nothing) Then
+'          'build the index...
+'          _Methods = New Dictionary(Of String, MethodInvokationAdapter)
+'          For Each m In GetType(TServiceContract).GetMethods()
+'            If (m.IsPublic) Then
+'              _Methods.Add(m.Name.ToLower(), New MethodInvokationAdapter(_Service, m, _RequstHooks))
+'            End If
+'          Next
+'        End If
+
+'        Return _Methods
+'      End Get
+'    End Property
+
+'    Private Function GetMethodByName(methodName As String) As MethodInvokationAdapter
+'      SyncLock _LockObj
+'        methodName = methodName.ToLower()
+'        If (Me.Methods.ContainsKey(methodName)) Then
+'          Return Me.Methods(methodName)
+'        Else
+'          Return Nothing
+'        End If
+'      End SyncLock
+'    End Function
+
+'    Public Sub DefineContract(contractUrlNode As UrlNodeDescriptor, models As List(Of Type)) Implements IContractSupplier.DefineContract
+'      SyncLock _LockObj
+'        For Each knownMethod In Me.Methods
+'          Dim methodInfo = knownMethod.Value.Method
+'          Dim nameChamelCase As String = methodInfo.Name.Substring(0, 1).ToLower() + methodInfo.Name.Substring(1)
+
+'          Dim virtualNodeOnMethodLevel As UrlNodeDescriptor
+'          If (contractUrlNode.SubnodesPerName.ContainsKey(nameChamelCase)) Then
+'            virtualNodeOnMethodLevel = contractUrlNode.SubnodesPerName(nameChamelCase)
+'          Else
+'            virtualNodeOnMethodLevel = New UrlNodeDescriptor
+'            contractUrlNode.SubnodesPerName.Add(nameChamelCase, virtualNodeOnMethodLevel)
+'          End If
+
+'          Dim od As New OperationDescriptor
+
+'          'sobald by ref da ist eine trage kapseö {OperationName}Result bauen
+'          ' darin names args fr das byref + ReturnValue Property
+'          'clientgenerator wird dann erkennen, dass er bei namensgleichehit byref generiert!!!!
+
+
+
+
+
+
+
+'          od.OperationId = nameChamelCase
+'          od.RequestPayloadType =
+
+'          od.ResponsePayloadType
+
+'          virtualNodeOnMethodLevel.OperationsPerVerb.Add("post", od)
+'        Next
+'      End SyncLock
+'    End Sub
+
+'    Public Sub ProcessRequest(request As IWebRequest, response As IWebResponse, session As IWebSessionState) Implements IWebRequestHandler.ProcessRequest
+'      Dim serializer As IWebSerializer = Nothing
+'      Dim requestDto As ServiceRequest = Nothing '<<< NEW WAY!!!
+'      Dim methodName As String = String.Empty
+
+'      Try
+
+'        If (request.HttpMethod.Equals("options", StringComparison.CurrentCultureIgnoreCase)) Then
+'          response.StatusCode = 200 'OK
+'          Exit Sub
+'        End If
+
+'        Dim result As Object = Nothing
+'        Dim writer As New StreamWriter(response.Stream)
+'        Dim urlValiables = request.ParseQuery()
+
+'        Dim communicationFormatName = "xaml"
+'        If (request.Headers.Item("Content-Type") = "application/json") Then
+'          communicationFormatName = "json"
+'        End If
+'        urlValiables.TryGetItem("Format", True, communicationFormatName)
+
+'        Try
+'          serializer = WebSerializer.GetInstanceByFormatName(communicationFormatName)
+'        Catch ex As Exception
+'          writer.Write("Unknown Format!")
+'          Exit Sub
+'        End Try
+
+'        Dim postBody As String = Nothing
+'        If (request.HttpMethod = "POST" OrElse request.HttpMethod = "PUT") Then
+'          Using sr As New StreamReader(request.InputStream)
+'            postBody = sr.ReadToEnd()
+'          End Using
+'        End If
+
+'        urlValiables.TryGetItem("Method", True, methodName)
+'        If (String.IsNullOrWhiteSpace(methodName)) Then
+'          If (String.IsNullOrWhiteSpace(postBody)) Then
+'            methodName = request.HttpMethod
+'          Else
+'            'TO NEW MODE - ALWAYS POST
+'            requestDto = serializer.Deserialize(Of ServiceRequest)(postBody)
+'            methodName = requestDto.CallArguments.MethodName
+'          End If
+'        End If
+
+'        If (requestDto Is Nothing) Then
+'          'OLD MODE
+'          requestDto = New ServiceRequest
+'          requestDto.CallArguments = New ServiceCallArguments
+'          requestDto.CallArguments.MethodName = methodName
+'          If (Not String.IsNullOrWhiteSpace(postBody)) Then
+'            Dim anonymousObject = serializer.Deserialize(postBody)
+'            Dim params As New List(Of CallParameter)
+'            For Each prop In anonymousObject.GetType().GetProperties()
+'              If (prop.CanRead) Then
+'                params.Add(New CallParameter With {.ParamName = prop.Name, .Value = prop.GetValue(anonymousObject)})
+'              End If
+'            Next
+'            requestDto.CallArguments.MethodArguments = params.ToArray()
+'          End If
+'        End If
+
+'        Dim method = Me.GetMethodByName(methodName)
+'        If (method Is Nothing) Then
+'          response.StatusCode = 501 'not implmented
+'          writer.Write("Unknown Method!")
+'          Exit Sub
+'        End If
+
+'        'PREPARE AMBIENCE ROOM
+'        Me.DistributeAmbientPayload(requestDto.CallArguments.AmbientPayload)
+
+'        'PROCESS THE SERVICE CALL
+'        result = method.Invoke(request, session, response, serializer, requestDto)
+
+'        If (requestDto Is Nothing) Then
+'          '##### BEG OLD WAY ################################################
+
+'          If (result Is Nothing) Then
+'            Exit Sub 'idr. bei OPTIONS COMMANDO!!!
+
+'          ElseIf (TypeOf (result) Is String) Then
+'            response.ContentWriter.Write(DirectCast(result, String))
+
+'          ElseIf (TypeOf (result) Is Byte()) Then
+'            Dim resultBa = DirectCast(result, Byte())
+'            response.Stream.Write(resultBa, 0, resultBa.Length)
+
+'          ElseIf (TypeOf (result) Is Stream) Then
+'            If (TypeOf (result) Is MimeTaggedStream) Then
+'              response.ContentMimeType = DirectCast(result, MimeTaggedStream).MimeType
+'            Else
+'              response.ContentMimeType = "application/octet-stream"
+'            End If
+'            DirectCast(result, Stream).CopyTo(response.Stream)
+
+'          ElseIf (TypeOf (result) Is Drawing.Image) Then
+'            response.ContentMimeType = "image/png"
+'            DirectCast(result, Drawing.Image).Save(response.Stream, Drawing.Imaging.ImageFormat.Png)
+
+'          ElseIf (TypeOf (result) Is FileInfo) Then
+'            With DirectCast(result, FileInfo)
+
+'              If (Not .Exists) Then
+'                response.ContentMimeType = "text/plain"
+'                response.ContentWriter.Write("File not found!")
+'                Exit Sub
+'              End If
+
+'              response.Header("Content-Disposition") = $"attachment; filename=""{ .Name }"""
+
+'              Select Case .Extension.ToLower()
+'                Case ".htm", ".html" : response.ContentMimeType = "text/html"
+'                Case ".jpg", ".jpeg" : response.ContentMimeType = "image/jpeg"
+'                Case ".png" : response.ContentMimeType = "image/png"
+'                Case ".xml" : response.ContentMimeType = "application/xml"
+'                Case ".pdf" : response.ContentMimeType = "application/pdf"
+'                Case Else : response.ContentMimeType = "application/octet-stream"
+'              End Select
+
+'              Using fs As New FileStream(.FullName, FileMode.Open, FileAccess.Read, FileShare.Read)
+'                fs.CopyTo(response.Stream)
+'              End Using
+
+'            End With
+
+'          Else 'REGULAR RESULT OBJECT
+
+'            'response.HeaderEncoding = System.Text.Encoding.UTF8
+'            'response.Headers.Add("Content-Type", "application/json")
+
+'            'If (TypeOf (result) Is Array) Then
+'            '    result = New DataSetResponse With {.Data = DirectCast(result, Array)}
+'            '    'result = New ArrayResponse With {.Data = DirectCast(result, Array)}
+'            '  End If
+
+'            'HACK: automatic wrapping into DataResponse Classes
+'            If (TypeOf (result) Is Array) Then
+'              Dim objArr As Object()
+'              objArr = DirectCast(result, Array).Cast(Of Object).ToArray()
+'              result = New DataSetResponse With {.Data = objArr}
+'              'result = New ArrayResponse With {.Data = DirectCast(result, Array)}
+'            ElseIf (Not TypeOf (result) Is DataResponse) Then
+'              result = New ScalarDataResponse With {.Data = result}
+'            End If
+'            Dim sr As String = serializer.Serialize(result)
+'            response.ContentMimeType = serializer.MimeType
+'            response.ContentWriter.Write(sr)
+
+'          End If
+
+'          '##### END OLD WAY ################################################
+'        Else
+'          '##### BEG NEW WAY ################################################
+
+
+
+'          'TODO: Sonderfälle dass returnvalue Stream, Image oder FileInfo ist!!!!
+
+
+
+'          'wrap into a responseCaplse
+'          Dim responseCaplse = New ServiceResponse With {
+'                        .CallResultData = New ServiceCallResults With {.ReturnValue = result},
+'                        .Status = ResponseStatus.OK
+'                    }
+
+'          If (result IsNot Nothing) Then
+'            responseCaplse.CallResultData.ReturnTypeName = result.GetType().Name
+'          End If
+
+'          Dim serializedResult As String = serializer.Serialize(responseCaplse)
+'          response.ContentMimeType = serializer.MimeType
+'          response.ContentWriter.Write(serializedResult)
+
+'          '##### END NEW WAY ################################################
+
+'        End If
+
+'      Catch ex As Exception
+
+'        If (TypeOf ex Is TargetInvocationException AndAlso ex.InnerException IsNot Nothing) Then
+'          ex = ex.InnerException
+'        End If
+
+'        'Me.HandleError(ex, request, response, session)
+
+'        Dim responseDto As New ServiceResponse With {.ErrorDetails = New ServiceErrorDetails}
+'        responseDto.Status = ResponseStatus.InternalServerError
+'        responseDto.ErrorDetails.MessageEN = "internal server error"
+'        responseDto.ErrorDetails.ErrorKey = "INTERNAL_SERVER_ERROR"
+
+'        Me.GetExceptionHandlingStrategy(methodName).HandleException(methodName, ex, request, session, requestDto, responseDto)
+
+'        If (serializer Is Nothing) Then
+'          response.StatusCode = responseDto.Status
+'          response.ContentMimeType = "text/plain"
+'          response.ContentWriter.Write(responseDto.ErrorDetails.MessageEN)
+'          Exit Sub
+'        End If
+
+'        '##### BEG OLD WAY ################################################
+'        If (requestDto Is Nothing) Then
+'          Dim errResponse As New ErrorResponse
+'          errResponse.MessageEN = responseDto.ErrorDetails.MessageEN
+'          errResponse.Key = responseDto.ErrorDetails.ErrorKey
+'          errResponse.Placeholders = responseDto.ErrorDetails.Placeholders
+'          Try
+'            Dim serializedResult As String = serializer.Serialize(errResponse)
+'            response.ContentMimeType = serializer.MimeType
+'            response.ContentWriter.Write(serializedResult)
+'          Catch
+'          End Try
+
+'          Exit Sub '<<<<<<<<<<<
+'        End If
+'        '##### END OLD WAY ################################################
 
-        Try
-          Dim serializedResult As String = serializer.Serialize(responseDto)
-          response.ContentMimeType = serializer.MimeType
-          response.ContentWriter.Write(serializedResult)
-        Catch
-        End Try
+'        Try
+'          Dim serializedResult As String = serializer.Serialize(responseDto)
+'          response.ContentMimeType = serializer.MimeType
+'          response.ContentWriter.Write(serializedResult)
+'        Catch
+'        End Try
 
-      End Try
+'      End Try
 
-    End Sub
+'    End Sub
 
-    Private Sub DistributeAmbientPayload(snapshot As CallParameter())
-      For Each ambienceChannel As IAmbienceChannel In _AmbienceChannels
-        ambienceChannel.ProcessIncommingData(snapshot)
-      Next
-    End Sub
+''    Private Sub DistributeAmbientPayload(snapshot As CallParameter())
+'      For Each ambienceChannel As IAmbienceChannel In _AmbienceChannels
+'        ambienceChannel.ProcessIncommingData(snapshot)
+'      Next
+'    End Sub
 
-    'HACK: Umbauen auf konfigurativ
-    Public Property ExceptionHandlingStrategy As IExceptionHandlingStrategy = New DefaultExceptionHandlingStrategy Implements IWebServiceFacade.ExceptionHandlingStrategy
+'    'HACK: Umbauen auf konfigurativ
+'    Public Property ExceptionHandlingStrategy As IExceptionHandlingStrategy = New DefaultExceptionHandlingStrategy Implements IWebServiceFacade.ExceptionHandlingStrategy
 
-    Private Function GetExceptionHandlingStrategy(methodName As String) As IExceptionHandlingStrategy
-      Return Me.ExceptionHandlingStrategy
-    End Function
+'    Private Function GetExceptionHandlingStrategy(methodName As String) As IExceptionHandlingStrategy
+'      Return Me.ExceptionHandlingStrategy
+'    End Function
 
-    'Public Property ExceptionMessageDisarmingMethod As Func(Of IWebRequest, Exception, String) = Function(r, ex) "processing error" Implements IWebServiceFacade.ExceptionMessageDisarmingMethod
+'    'Public Property ExceptionMessageDisarmingMethod As Func(Of IWebRequest, Exception, String) = Function(r, ex) "processing error" Implements IWebServiceFacade.ExceptionMessageDisarmingMethod
 
-    'Protected Overridable Sub HandleError(ex As Exception, request As IWebRequest, response As IWebResponse, session As IWebSessionState)
-    '  Me.ExceptionLoggingMethod.Invoke(ex, request, session)
-    'End Sub
+'    'Protected Overridable Sub HandleError(ex As Exception, request As IWebRequest, response As IWebResponse, session As IWebSessionState)
+'    '  Me.ExceptionLoggingMethod.Invoke(ex, request, session)
+'    'End Sub
 
-    'Public Property ExceptionLoggingMethod As Action(Of Exception, IWebRequest, IWebSessionState) = (
-    '  Sub(ex As Exception, request As IWebRequest, session As IWebSessionState)
-    '    System.Diagnostics.Trace.TraceError("{0} {1}", ex.Message, ex.StackTrace, request.Url)
-    '  End Sub
-    ')
+'    'Public Property ExceptionLoggingMethod As Action(Of Exception, IWebRequest, IWebSessionState) = (
+'    '  Sub(ex As Exception, request As IWebRequest, session As IWebSessionState)
+'    '    System.Diagnostics.Trace.TraceError("{0} {1}", ex.Message, ex.StackTrace, request.Url)
+'    '  End Sub
+'    ')
 
-#Region " IDisposable "
+'#Region " IDisposable "
 
-    <DebuggerBrowsable(DebuggerBrowsableState.Never)>
-    Private _AlreadyDisposed As Boolean = False
+'    <DebuggerBrowsable(DebuggerBrowsableState.Never)>
+'    Private _AlreadyDisposed As Boolean = False
 
-    ''' <summary>
-    ''' Dispose the current object instance and suppress the finalizer
-    ''' </summary>
-    <EditorBrowsable(EditorBrowsableState.Advanced)>
-    Public Sub Dispose() Implements IDisposable.Dispose
-      If (Not _AlreadyDisposed) Then
-        Me.Disposing()
-        _AlreadyDisposed = True
-      End If
-      GC.SuppressFinalize(Me)
-    End Sub
+'    ''' <summary>
+'    ''' Dispose the current object instance and suppress the finalizer
+'    ''' </summary>
+'    <EditorBrowsable(EditorBrowsableState.Advanced)>
+'    Public Sub Dispose() Implements IDisposable.Dispose
+'      If (Not _AlreadyDisposed) Then
+'        Me.Disposing()
+'        _AlreadyDisposed = True
+'      End If
+'      GC.SuppressFinalize(Me)
+'    End Sub
 
-    <EditorBrowsable(EditorBrowsableState.Advanced)>
-    Protected Overridable Sub Disposing()
+'    <EditorBrowsable(EditorBrowsableState.Advanced)>
+'    Protected Overridable Sub Disposing()
 
 
-    End Sub
+'    End Sub
 
-    <EditorBrowsable(EditorBrowsableState.Advanced)>
-    Protected Sub DisposedGuard()
-      If (_AlreadyDisposed) Then
-        Throw New ObjectDisposedException(Me.GetType.Name)
-      End If
-    End Sub
+'    <EditorBrowsable(EditorBrowsableState.Advanced)>
+'    Protected Sub DisposedGuard()
+'      If (_AlreadyDisposed) Then
+'        Throw New ObjectDisposedException(Me.GetType.Name)
+'      End If
+'    End Sub
 
 
-#End Region
+'#End Region
 
-    'Public Sub Configure(configurationMethod As Action(Of ServiceFacadeConfigurator(Of TServiceContract)))
-    '  configurationMethod.Invoke(New ServiceFacadeConfigurator(Of TServiceContract)(Me))
-    'End Sub
+'    'Public Sub Configure(configurationMethod As Action(Of ServiceFacadeConfigurator(Of TServiceContract)))
+'    '  configurationMethod.Invoke(New ServiceFacadeConfigurator(Of TServiceContract)(Me))
+'    'End Sub
 
-  End Class
+'  End Class
 
-#Region " Experimental "
+'#Region " Experimental "
 
-  'Public Class ServiceFacadeConfigurator(Of TServiceContract)
+'  'Public Class ServiceFacadeConfigurator(Of TServiceContract)
 
-  '  Private _Facade As WebServiceFacade(Of TServiceContract)
+'  '  Private _Facade As WebServiceFacade(Of TServiceContract)
 
-  '  Public Sub New(facade As WebServiceFacade(Of TServiceContract))
-  '    _Facade = facade
-  '  End Sub
+'  '  Public Sub New(facade As WebServiceFacade(Of TServiceContract))
+'  '    _Facade = facade
+'  '  End Sub
 
-  '  Public Function AllPublicMethods() As IServiceFacadeMethodConfigurator(Of TServiceContract)
+'  '  Public Function AllPublicMethods() As IServiceFacadeMethodConfigurator(Of TServiceContract)
 
-  '  End Function
+'  '  End Function
 
-  '  Public Function [Method](methodName As String) As IServiceFacadeMethodConfigurator(Of TServiceContract)
+'  '  Public Function [Method](methodName As String) As IServiceFacadeMethodConfigurator(Of TServiceContract)
 
-  '  End Function
+'  '  End Function
 
 
-  'End Class
+'  'End Class
 
-  'Public Interface IServiceFacadeMethodConfigurator(Of TServiceContract)
+'  'Public Interface IServiceFacadeMethodConfigurator(Of TServiceContract)
 
-  '  Sub Ignore()
-  '  Sub Expose()
-  '  Sub ExposeAs(methodName As String)
+'  '  Sub Ignore()
+'  '  Sub Expose()
+'  '  Sub ExposeAs(methodName As String)
 
 
-  '  'Sub SetPreparationMethod(preparationMethod As Action(Of ))
+'  '  'Sub SetPreparationMethod(preparationMethod As Action(Of ))
 
-  '  Sub SetExceptionHandlingStrategy(strategy As IExceptionHandlingStrategy)
+'  '  Sub SetExceptionHandlingStrategy(strategy As IExceptionHandlingStrategy)
 
-  '  ' Sub SetResultProcessingMethod(preparationMethod As Action(Of ))
+'  '  ' Sub SetResultProcessingMethod(preparationMethod As Action(Of ))
 
-  'End Interface
+'  'End Interface
 
-#End Region
+'#End Region
 
-End Namespace
+'End Namespace

@@ -20,6 +20,7 @@ Namespace AbstractHosting.CEF
     <DebuggerDisplay("Request: {HttpMethod} {Url}")>
     Public Class CefWebRequestWrapper
       Implements IWebRequest
+      Implements IDisposable
 
 #Region " Fields & Constructor "
 
