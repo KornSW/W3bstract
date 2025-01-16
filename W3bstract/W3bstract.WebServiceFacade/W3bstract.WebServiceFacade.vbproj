@@ -78,12 +78,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Description\OpenApiDefinitionGenerator.vb" />
-    <Compile Include="Description\SwaggerUiBundle.vb" />
     <Compile Include="Facade\ExceptionHandlingStrategy.vb" />
     <Compile Include="Facade\IWebServiceRequestHook.vb" />
     <Compile Include="Facade\RestServiceFacade.vb" />
     <Compile Include="Facade\RestServiceFacade.MethodInvokationAdapter.vb" />
+    <Compile Include="OpenApiSupport\OpenApiDefinitionGenerator.vb" />
+    <Compile Include="OpenApiSupport\SwaggerUiBundle.vb" />
     <Compile Include="Serialization\JsonTypeConversion.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">

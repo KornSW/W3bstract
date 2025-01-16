@@ -26,7 +26,7 @@ Public Module Main
 
       Dim pxy As New JsInMemoryHttpClient(root, stateMgr)
 
-      DialogLauncher.ShowDialog(root, stateMgr, Application.ProductName, My.Resources.AppIcon, True, svc)
+      DialogLauncher.ShowDialog(root, stateMgr, Application.ProductName, My.Resources.AppIcon, False, svc)
 
     End Using
 

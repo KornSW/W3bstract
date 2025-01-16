@@ -124,7 +124,7 @@ Public Class HttpServer
         Dim privateIdentity As String = "_" & request.ClientIpAddress.ToString()
         Dim publicSid As String = Guid.NewGuid().ToString().ToLower()
         Dim privateSid = publicSid & privateIdentity
-        response.AddCustomHeader("Set-Cookie", "JSESSIONID=" & publicSid & "")
+        response.AddCustomHeader("Set-Cookie", "JSESSIONID=" & publicSid & "; SameSite=Strict")
         Return privateSid
       End Function
     )
